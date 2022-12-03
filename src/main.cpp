@@ -1,5 +1,6 @@
 #include "main.h"
 #include "pros/llemu.hpp"
+#include "pros/misc.h"
 #include "util.hpp"
 
 /**
@@ -13,9 +14,10 @@
 #define INERTIAL_PORT 11
 
 /**
- * Flywheel ports
+ * Catapult ports
  */
-#define FLYWHEEL_1 20
+#define CATAPULT_MOTOR 5
+#define CATAPULT_LIMIT "A"
 
 /**
  * utility macros
@@ -43,16 +45,22 @@ auto chassis = ChassisControllerBuilder()
 auto model = std::static_pointer_cast<XDriveModel>(chassis->getModel());
 
 /**
- * define flywheel (blue gearset)
+ * define catapult motor and limit switch
  */
-auto flywheel = std::make_shared<okapi::Motor>(
-    FLYWHEEL_1, true, AbstractMotor::gearset::blue,
+auto catapult_motor = std::make_shared<okapi::Motor>(
+    CATAPULT_MOTOR, true, AbstractMotor::gearset::red,
     AbstractMotor::encoderUnits::degrees);
+
+// auto catapult_limit = std::make_shared<pros::ADIDigitalIn>(CATAPULT_LIMIT);
 
 /**
  * states
  */
 bool chassis_break = false;
+
+// catapult states
+enum Catapult { REELING, FIRING, IDLE };
+Catapult catapult_state = IDLE;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -70,6 +78,8 @@ void initialize() {
   while (inertial->isCalibrating()) {
     pros::delay(10);
   }
+
+  catapult_motor->setBrakeMode(AbstractMotor::brakeMode::hold);
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 
@@ -177,24 +187,43 @@ void opcontrol() {
     }
 
     // toggle flywheel
-    BUTTON(pros::E_CONTROLLER_DIGITAL_R1) {
-      // get current flywheel speed
-      double flywheel_speed = flywheel->getTargetVelocity();
+    HELD(pros::E_CONTROLLER_DIGITAL_R1) {
+      // // get current flywheel speed
+      // double flywheel_speed = flywheel->getTargetVelocity();
 
-      // if velocity is 0, set to 200 rpm
-      if (flywheel_speed == 0) {
-        flywheel->moveVelocity(600);
-      } else {
-        flywheel->moveVelocity(0);
-      }
+      // // if velocity is 0, set to 200 rpm
+      // if (flywheel_speed == 0) {
+      //   flywheel->moveVelocity(600);
+      // } else {
+      //   flywheel->moveVelocity(0);
+      // }
+
+      catapult_motor->moveVelocity(200);
+    }
+    else {
+      catapult_motor->moveVelocity(0);
     }
 
     // print actual flywheel speed on 4th line of LCD
-    pros::lcd::set_text(
-        4, "Flywheel: " + std::to_string(flywheel->getActualVelocity()) +
-               " rpm (" + std::to_string(flywheel->getTemperature()) + "C)");
+    // pros::lcd::set_text(
+    //     4, "Flywheel: " + std::to_string(flywheel->getActualVelocity()) +
+    //            " rpm (" + std::to_string(flywheel->getTemperature()) + "C)");
 
     // delay
     pros::delay(10);
   }
 }
+
+// async function to launch catapult
+// void launchCatapult() {
+//   // reel back catapult until catapult_limit is pressed
+//   catapult_state = REELING;
+
+//   catapult_motor->moveVelocity(-200);
+
+//   while (!catapult_limit->get_value() && catapult_state == REELING) {
+//     pros::delay(10);
+//   }
+
+//   catapult_motor->moveVelocity(0);
+// }
