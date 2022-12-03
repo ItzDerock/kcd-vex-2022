@@ -2,6 +2,7 @@
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "util.hpp"
+#include <sys/_stdint.h>
 
 /**
  * Drive train ports
@@ -17,7 +18,12 @@
  * Catapult ports
  */
 #define CATAPULT_MOTOR 5
-#define CATAPULT_LIMIT "A"
+#define CATAPULT_POTENTIOMETER 1
+
+/**
+ * Intake ports
+ */
+#define INTAKE_MOTOR 6
 
 /**
  * utility macros
@@ -45,13 +51,20 @@ auto chassis = ChassisControllerBuilder()
 auto model = std::static_pointer_cast<XDriveModel>(chassis->getModel());
 
 /**
- * define catapult motor and limit switch
+ * define catapult motor and potentiometer
  */
 auto catapult_motor = std::make_shared<okapi::Motor>(
     CATAPULT_MOTOR, true, AbstractMotor::gearset::red,
     AbstractMotor::encoderUnits::degrees);
 
-// auto catapult_limit = std::make_shared<pros::ADIDigitalIn>(CATAPULT_LIMIT);
+auto catapult_pot = std::make_shared<pros::ADIAnalogIn>(CATAPULT_POTENTIOMETER);
+
+/**
+ * define intake motor
+ */
+auto intake_motor = std::make_shared<okapi::Motor>(
+    INTAKE_MOTOR, true, AbstractMotor::gearset::blue,
+    AbstractMotor::encoderUnits::degrees);
 
 /**
  * states
@@ -59,8 +72,36 @@ auto catapult_motor = std::make_shared<okapi::Motor>(
 bool chassis_break = false;
 
 // catapult states
-enum Catapult { REELING, FIRING, IDLE };
+enum Catapult { REELING, READY_TO_LAUNCH, LAUNCHING, IDLE };
 Catapult catapult_state = IDLE;
+
+void run_catapult() {
+  // only run if catapult status is "REELING"
+  if (catapult_state == REELING) {
+    // move until 1200 on potentiometer
+    if (catapult_pot->get_value() < 1200) {
+      if (catapult_motor->getTargetVelocity() == 0) {
+        catapult_motor->moveVelocity(100);
+      }
+    } else {
+      catapult_motor->moveVelocity(0);
+      catapult_state = READY_TO_LAUNCH;
+    }
+  } else
+
+    // only run if catapult status is "LAUNCHING"
+    if (catapult_state == LAUNCHING) {
+      // move until 15 on potentiometer
+      if (catapult_pot->get_value() > 15) {
+        if (catapult_motor->getTargetVelocity() == 0) {
+          catapult_motor->moveVelocity(75);
+        }
+      } else {
+        catapult_motor->moveVelocity(0);
+        catapult_state = IDLE;
+      }
+    }
+}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -70,7 +111,7 @@ Catapult catapult_state = IDLE;
  */
 void initialize() {
   pros::lcd::initialize();
-  pros::lcd::set_text(1, "[i] Calibrating IMU...");
+  pros::lcd::set_text(1, "[i] Calibrating IMU and POT...");
 
   // calibrate IMU
   inertial->calibrate();
@@ -80,6 +121,9 @@ void initialize() {
   }
 
   catapult_motor->setBrakeMode(AbstractMotor::brakeMode::hold);
+
+  // calibrate catapult potentiometer
+  catapult_pot->calibrate();
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 
@@ -141,6 +185,9 @@ void opcontrol() {
   pros::Controller master(pros::E_CONTROLLER_MASTER);
 
   while (true) {
+    // run catapult updater
+    run_catapult();
+
     // get joystick values
     double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
     double iforwardSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -167,7 +214,7 @@ void opcontrol() {
     }
 
     // toggle chassis break
-    BUTTON(pros::E_CONTROLLER_DIGITAL_L1) {
+    BUTTON(pros::E_CONTROLLER_DIGITAL_L2) {
       chassis_break = !chassis_break;
       model->setBrakeMode(chassis_break ? AbstractMotor::brakeMode::hold
                                         : AbstractMotor::brakeMode::coast);
@@ -186,23 +233,47 @@ void opcontrol() {
       pros::lcd::set_text(3, "Chassis Break: " + std::to_string(chassis_break));
     }
 
+    // toggle intake
+    BUTTON(pros::E_CONTROLLER_DIGITAL_R1) {
+      if (intake_motor->getTargetVelocity() == 0) {
+        intake_motor->moveVelocity(600);
+      } else {
+        intake_motor->moveVelocity(0);
+      }
+    }
+
+    // intake lcd: Intake <actual velocity> <target velocity>
+    pros::lcd::set_text(
+        4, "Intake " + std::to_string(intake_motor->getActualVelocity()) + " " +
+               std::to_string(intake_motor->getTargetVelocity()));
+
     // toggle flywheel
-    HELD(pros::E_CONTROLLER_DIGITAL_R1) {
-      // // get current flywheel speed
-      // double flywheel_speed = flywheel->getTargetVelocity();
+    BUTTON(pros::E_CONTROLLER_DIGITAL_L1) {
+      switch (catapult_state) {
+      case REELING:
+      case LAUNCHING:
+        // pass
+        break;
 
-      // // if velocity is 0, set to 200 rpm
-      // if (flywheel_speed == 0) {
-      //   flywheel->moveVelocity(600);
-      // } else {
-      //   flywheel->moveVelocity(0);
-      // }
+      case IDLE:
+        // set state to REELING
+        catapult_state = REELING;
+        catapult_motor->moveVelocity(100);
+        pros::lcd::set_text(6, "Catapult: REELING BACK");
+        break;
 
-      catapult_motor->moveVelocity(200);
+      case READY_TO_LAUNCH:
+        // set state to LAUNCHING
+        catapult_state = LAUNCHING;
+        catapult_motor->moveVelocity(100);
+        break;
+      }
     }
-    else {
-      catapult_motor->moveVelocity(0);
-    }
+
+    // display potentiometer value and catapult_status
+    pros::lcd::set_text(
+        5, "Potentiometer: " + std::to_string(catapult_pot->get_value()) +
+               " Catapult: " + std::to_string(catapult_state));
 
     // print actual flywheel speed on 4th line of LCD
     // pros::lcd::set_text(
@@ -213,17 +284,3 @@ void opcontrol() {
     pros::delay(10);
   }
 }
-
-// async function to launch catapult
-// void launchCatapult() {
-//   // reel back catapult until catapult_limit is pressed
-//   catapult_state = REELING;
-
-//   catapult_motor->moveVelocity(-200);
-
-//   while (!catapult_limit->get_value() && catapult_state == REELING) {
-//     pros::delay(10);
-//   }
-
-//   catapult_motor->moveVelocity(0);
-// }
