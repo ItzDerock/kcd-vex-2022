@@ -50,7 +50,7 @@ void initialize() {
 
   // button 3 should run auton if not in competition mode
   pros::lcd::register_btn2_cb([]() {
-    if (!competition::is_connected()) {
+    if (!pros::competition::is_connected()) {
       auton::run();
     }
   });
@@ -140,14 +140,14 @@ void opcontrol() {
     // deadzone, if all values are below 0.1 return
     if (fabs(rightSpeed) < 0.1 && fabs(forwardSpeed) < 0.1 &&
         fabs(rotationSpeed) < 0.1) {
-      pros::lcd::set_text(2, "Chassis: Stopped");
+      pros::lcd::set_text(3, "Chassis: Stopped");
       chassis->stop();
     } else {
       // set chassis speed
       model->xArcade(rightSpeed, forwardSpeed, rotationSpeed);
 
       // print right, forward, rot on 2nd line of LCD
-      pros::lcd::set_text(2, "R: " + utils::round(rightSpeed, 2) +
+      pros::lcd::set_text(3, "R: " + utils::round(rightSpeed, 2) +
                                  " Fw: " + utils::round(forwardSpeed, 2) +
                                  " Rt: " + utils::round(rotationSpeed, 2));
     }
@@ -169,7 +169,7 @@ void opcontrol() {
                                           : AbstractMotor::brakeMode::coast);
       }
 
-      pros::lcd::set_text(3, "Chassis Break: " + std::to_string(chassis_break));
+      pros::lcd::set_text(4, "Chassis Break: " + std::to_string(chassis_break));
     }
 
     // toggle intake
@@ -183,7 +183,7 @@ void opcontrol() {
 
     // intake lcd: Intake <actual velocity> <target velocity>
     pros::lcd::set_text(
-        4, "Intake " + std::to_string(intake_motor->getActualVelocity()) + " " +
+        5, "Intake " + std::to_string(intake_motor->getActualVelocity()) + " " +
                std::to_string(intake_motor->getTargetVelocity()));
 
     // toggle flywheel
@@ -210,7 +210,7 @@ void opcontrol() {
 
     // display potentiometer value and catapult_status
     pros::lcd::set_text(
-        5, "Potentiometer: " + std::to_string(catapult_pot->get_value()) +
+        6, "Potentiometer: " + std::to_string(catapult_pot->get_value()) +
                " Catapult: " + std::to_string(catapult_state));
 
     // print actual flywheel speed on 4th line of LCD

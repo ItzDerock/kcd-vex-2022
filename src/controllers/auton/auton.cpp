@@ -11,28 +11,28 @@ AutonType auton_type = NONE;
 GameSide game_side = RED;
 
 void run() {
-  switch (auton_type) {
-  case SIDE:
-    if (game_side == RED) {
-      run_red_side();
-    } else {
-      run_blue_side();
-    }
-    break;
-  case BACK:
-    if (game_side == RED) {
-      run_red_back();
-    } else {
-      run_blue_back();
-    }
-    break;
-  case SKILLS:
-    run_skills();
-    break;
-  case NONE:
-    run_none();
-    break;
-  }
+  // switch (auton_type) {
+  // case SIDE:
+  //   if (game_side == RED) {
+  //     run_red_side();
+  //   } else {
+  //     run_blue_side();
+  //   }
+  //   break;
+  // case BACK:
+  //   if (game_side == RED) {
+  //     run_red_back();
+  //   } else {
+  //     run_blue_back();
+  //   }
+  //   break;
+  // case SKILLS:
+  //   run_skills();
+  //   break;
+  // case NONE:
+  //   run_none();
+  //   break;
+  // }
 }
 
 void updateDisplay() {

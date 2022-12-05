@@ -6,7 +6,11 @@
 
 namespace auton {
 
-inline void red_side_run() {}
+inline void run_red_back() {}
+inline void run_red_side() {}
+
+inline void run_skills() {}
+inline void run_none() {}
 
 } // namespace auton
 
