@@ -4,82 +4,13 @@
 #include "util.hpp"
 #include <sys/_stdint.h>
 
-/**
- * Drive train ports
- */
-#define DRIVE_TOP_LEFT 1
-#define DRIVE_TOP_RIGHT 2
-#define DRIVE_BOTTOM_LEFT 3
-#define DRIVE_BOTTOM_RIGHT 4
-
-#define INERTIAL_PORT 11
-
-/**
- * Catapult ports
- */
-#define CATAPULT_MOTOR 5
-#define CATAPULT_POTENTIOMETER 1
-
-/**
- * Intake ports
- */
-#define INTAKE_MOTOR 6
-
-/**
- * utility macros
- */
-#define BUTTON(x) if (master.get_digital_new_press(x))
-#define HELD(x) if (master.get_digital(x))
-
-/**
- * define inertial sensor
- */
-auto inertial = std::make_shared<IMU>(INERTIAL_PORT);
-
-/**
- * define chassis and model
- */
-auto chassis = ChassisControllerBuilder()
-                   .withMotors(DRIVE_TOP_LEFT, -DRIVE_TOP_RIGHT,
-                               -DRIVE_BOTTOM_RIGHT, DRIVE_BOTTOM_LEFT)
-                   .withDimensions(AbstractMotor::gearset::green,
-                                   {{4_in, 12.5_in}, imev5GreenTPR})
-                   .withOdometry()
-                   .buildOdometry();
-//  .build();
-
-auto model = std::static_pointer_cast<XDriveModel>(chassis->getModel());
-
-/**
- * define catapult motor and potentiometer
- */
-auto catapult_motor = std::make_shared<okapi::Motor>(
-    CATAPULT_MOTOR, true, AbstractMotor::gearset::red,
-    AbstractMotor::encoderUnits::degrees);
-
-auto catapult_pot = std::make_shared<pros::ADIAnalogIn>(CATAPULT_POTENTIOMETER);
-
-/**
- * define intake motor
- */
-auto intake_motor = std::make_shared<okapi::Motor>(
-    INTAKE_MOTOR, true, AbstractMotor::gearset::blue,
-    AbstractMotor::encoderUnits::degrees);
-
-/**
- * states
- */
-bool chassis_break = false;
-
-// catapult states
-enum Catapult { REELING, READY_TO_LAUNCH, LAUNCHING, IDLE };
-Catapult catapult_state = IDLE;
+#include "core/config.hpp"
 
 void run_catapult() {
   // only run if catapult status is "REELING"
   if (catapult_state == REELING) {
     // move until 1200 on potentiometer
-    if (catapult_pot->get_value() < 1200) {
+    if (catapult_pot->get_value() < 1150) {
       if (catapult_motor->getTargetVelocity() == 0) {
         catapult_motor->moveVelocity(100);
       }
@@ -236,7 +167,7 @@ void opcontrol() {
     // toggle intake
     BUTTON(pros::E_CONTROLLER_DIGITAL_R1) {
       if (intake_motor->getTargetVelocity() == 0) {
-        intake_motor->moveVelocity(600);
+        intake_motor->moveVelocity(500);
       } else {
         intake_motor->moveVelocity(0);
       }
@@ -259,7 +190,6 @@ void opcontrol() {
         // set state to REELING
         catapult_state = REELING;
         catapult_motor->moveVelocity(100);
-        pros::lcd::set_text(6, "Catapult: REELING BACK");
         break;
 
       case READY_TO_LAUNCH:
