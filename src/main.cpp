@@ -4,6 +4,7 @@
 #include "util.hpp"
 #include <sys/_stdint.h>
 
+#include "controllers/auton/auton.hpp"
 #include "core/config.hpp"
 
 void run_catapult() {
@@ -42,6 +43,18 @@ void run_catapult() {
  */
 void initialize() {
   pros::lcd::initialize();
+
+  pros::lcd::register_btn0_cb(auton::toggleMode);
+  pros::lcd::register_btn1_cb(auton::toggleSide);
+  auton::updateDisplay();
+
+  // button 3 should run auton if not in competition mode
+  pros::lcd::register_btn2_cb([]() {
+    if (!competition::is_connected()) {
+      auton::run();
+    }
+  });
+
   pros::lcd::set_text(1, "[i] Calibrating IMU and POT...");
 
   // calibrate IMU
@@ -57,11 +70,6 @@ void initialize() {
   catapult_pot->calibrate();
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
-
-  // flywheel->setGearing(AbstractMotor::gearset::blue);
-  // flywheel->setBrakeMode(AbstractMotor::brakeMode::coast);
-  // flywheel->setEncoderUnits(AbstractMotor::encoderUnits::degrees);
-  // flywheel->tarePosition();
 }
 
 /**
@@ -95,7 +103,7 @@ void competition_initialize() {}
  */
 void autonomous() {
   pros::lcd::set_text(1, "[i] Autonomous Started");
-  chassis->moveDistance(12_in);
+  auton::run();
   pros::lcd::set_text(1, "[i] Autonomous Ended");
 }
 
