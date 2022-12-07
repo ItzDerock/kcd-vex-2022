@@ -88,7 +88,18 @@ void disabled() { pros::lcd::set_text(1, "[i] Robot Disabled"); }
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+  // recalibrate IMU
+  pros::lcd::set_text(1, "[i] Recalibrating IMU (competition)...");
+  inertial->calibrate();
+  catapult_pot->calibrate();
+
+  while (inertial->isCalibrating()) {
+    pros::delay(10);
+  }
+
+  pros::lcd::set_text(1, "[i] Ready to rumble!");
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
