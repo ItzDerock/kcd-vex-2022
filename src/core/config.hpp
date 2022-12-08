@@ -46,6 +46,7 @@ extern std::shared_ptr<Motor> intake_motor;
 extern std::shared_ptr<Motor> roller_motor;
 
 extern bool chassis_break;
+extern bool auto_reload;
 
 // catapult states
 enum Catapult { REELING, READY_TO_LAUNCH, LAUNCHING, IDLE };

@@ -54,6 +54,7 @@ std::shared_ptr<Motor> roller_motor = std::make_shared<okapi::Motor>(
  * states
  */
 bool chassis_break = false;
+bool auto_reload = true;
 
 // catapult states
 Catapult catapult_state = IDLE;

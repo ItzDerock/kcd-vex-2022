@@ -8,6 +8,10 @@
 #include "core/config.hpp"
 
 void run_catapult() {
+  if (catapult_state == IDLE && auto_reload) {
+    catapult_state = REELING;
+  }
+
   // only run if catapult status is "REELING"
   if (catapult_state == REELING) {
     // move until 1200 on potentiometer
@@ -20,7 +24,6 @@ void run_catapult() {
       catapult_state = READY_TO_LAUNCH;
     }
   } else
-
     // only run if catapult status is "LAUNCHING"
     if (catapult_state == LAUNCHING) {
       // move until 15 on potentiometer
@@ -139,9 +142,9 @@ void opcontrol() {
     run_catapult();
 
     // get joystick values
-    double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
     double iforwardSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-    double irotSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    double irotSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
 
     // scale joystick values
     double rightSpeed = utils::mapValue(irightSpeed, -127, 127, -1, 1);
@@ -237,6 +240,12 @@ void opcontrol() {
       } else {
         roller_motor->moveVelocity(0);
       }
+    }
+
+    // toggle auto-reload
+    BUTTON(pros::E_CONTROLLER_DIGITAL_X) {
+      auto_reload = !auto_reload;
+      pros::lcd::set_text(7, "Auto Reload: " + std::to_string(auto_reload));
     }
 
     // display potentiometer value and catapult_status
