@@ -164,7 +164,7 @@ void opcontrol() {
     }
 
     // toggle chassis break
-    BUTTON(pros::E_CONTROLLER_DIGITAL_L2) {
+    BUTTON(pros::E_CONTROLLER_DIGITAL_B) {
       chassis_break = !chassis_break;
       model->setBrakeMode(chassis_break ? AbstractMotor::brakeMode::hold
                                         : AbstractMotor::brakeMode::coast);
@@ -185,8 +185,19 @@ void opcontrol() {
 
     // toggle intake
     BUTTON(pros::E_CONTROLLER_DIGITAL_R1) {
-      if (intake_motor->getTargetVelocity() == 0) {
-        intake_motor->moveVelocity(500);
+      if (intake_motor->getTargetVelocity() == 0 ||
+          intake_motor->getTargetVelocity() == -200) {
+        intake_motor->moveVelocity(200);
+      } else {
+        intake_motor->moveVelocity(0);
+      }
+    }
+
+    // reverse intake
+    BUTTON(pros::E_CONTROLLER_DIGITAL_R2) {
+      if (intake_motor->getTargetVelocity() == 0 ||
+          intake_motor->getTargetVelocity() == 200) {
+        intake_motor->moveVelocity(-200);
       } else {
         intake_motor->moveVelocity(0);
       }
@@ -216,6 +227,15 @@ void opcontrol() {
         catapult_state = LAUNCHING;
         catapult_motor->moveVelocity(100);
         break;
+      }
+    }
+
+    // toggle roller
+    BUTTON(pros::E_CONTROLLER_DIGITAL_L2) {
+      if (roller_motor->getTargetVelocity() == 0) {
+        roller_motor->moveVelocity(100);
+      } else {
+        roller_motor->moveVelocity(0);
       }
     }
 

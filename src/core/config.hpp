@@ -27,6 +27,11 @@
 #define INTAKE_MOTOR 6
 
 /**
+ * Roller thing port
+ */
+#define ROLLER_MOTOR 7
+
+/**
  * utility macros
  */
 #define BUTTON(x) if (master.get_digital_new_press(x))
@@ -38,6 +43,7 @@ extern std::shared_ptr<IMU> inertial;
 extern std::shared_ptr<Motor> catapult_motor;
 extern std::shared_ptr<pros::ADIAnalogIn> catapult_pot;
 extern std::shared_ptr<Motor> intake_motor;
+extern std::shared_ptr<Motor> roller_motor;
 
 extern bool chassis_break;
 

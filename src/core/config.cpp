@@ -40,7 +40,14 @@ std::shared_ptr<pros::ADIAnalogIn> catapult_pot =
  * define intake motor
  */
 std::shared_ptr<Motor> intake_motor = std::make_shared<okapi::Motor>(
-    INTAKE_MOTOR, true, AbstractMotor::gearset::blue,
+    INTAKE_MOTOR, true, AbstractMotor::gearset::green,
+    AbstractMotor::encoderUnits::degrees);
+
+/**
+ * define roller motor
+ */
+std::shared_ptr<Motor> roller_motor = std::make_shared<okapi::Motor>(
+    ROLLER_MOTOR, true, AbstractMotor::gearset::red,
     AbstractMotor::encoderUnits::degrees);
 
 /**
