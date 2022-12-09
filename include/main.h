@@ -39,6 +39,7 @@
 /**
  * You should add more #includes here
  */
+#include "ARMS/api.h"
 #include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
 
@@ -78,4 +79,4 @@ void opcontrol(void);
 //#include <iostream>
 #endif
 
-#endif  // _PROS_MAIN_H_
+#endif // _PROS_MAIN_H_

@@ -1,0 +1,544 @@
+Transferring V5 to download channel
+Current Angle: 3.488637
+Initial Angle: 3.488637
+Error: 0.000000
+Left: nan, Right: nan
+Correction: nan
+
+Current Angle: 3.488049
+Initial Angle: 3.488637
+Error: -0.000588
+Left: 100.017935, Right: 99.982065
+Correction: -0.017935
+
+Current Angle: 3.489832
+Initial Angle: 3.488637
+Error: 0.001195
+Left: 99.945915, Right: 100.054085
+Correction: 0.054085
+
+Current Angle: 3.488327
+Initial Angle: 3.488637
+Error: -0.000310
+Left: 100.045299, Right: 99.954701
+Correction: -0.045299
+
+Current Angle: 3.486787
+Initial Angle: 3.488637
+Error: -0.001851
+Left: 100.047152, Right: 99.952848
+Correction: -0.047152
+
+Current Angle: 3.494733
+Initial Angle: 3.488637
+Error: 0.006095
+Left: 99.758558, Right: 100.241442
+Correction: 0.241442
+
+Current Angle: 3.543053
+Initial Angle: 3.488637
+Error: 0.054415
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 28736f75744c6566743a2039382e3532323839342c2052383336380a
+
+Current Angle: 3.557115
+Initial Angle: 3.488637
+Error: 0.068477
+Left: 100.241705, Right: 99.758295
+Correction: -0.241705
+
+Current Angle: 3.584841
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1d736f7574496e697469616c20416e676c653a20332e3436300a
+
+Current Angle: 4.627803
+Initial Angle: 3.488637
+Error: 1.139166
+Left: 94.540072, Right: 105.459928
+Correction: 5.459928
+
+Current Angle: 4.759774
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1d736f7574496e697469616c20416e676c653a20332e343838360a
+
+Current Angle: 5.212715
+Initial Angle: 3.488637
+Error: 1.724078
+Left: 96.519182, Right: 103.480818
+Correction: 3.480818
+
+Current Angle: 5.287616
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1d736f7574496e697469616c20416e676c653a20332e343838363337
+
+Current Angle: 5.397285
+Initial Angle: 3.488637
+Error: 1.908647
+Left: 99.921913, Right: 100.078087
+Correction: 0.078087
+
+Current Angle: 5.361949
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1d736f7574496e697469616c20416e676c653a20332e3438383633370a0a
+
+Current Angle: 5.211356
+Initial Angle: 3.488637
+Error: 1.722718
+Left: 100.131300, Right: 99.868700
+Correction: -0.131300
+
+Current Angle: 5.146491
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1d736f7574496e697469616c20416e676c653a20332e3438383633353839380a
+
+Current Angle: 4.952324
+Initial Angle: 3.488637
+Error: 1.463687
+Left: 99.741195, Right: 100.258805
+Correction: 0.258805
+
+Current Angle: 4.934451
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1d736f7574496e697469616c20416e676c653a20332e343834353933350a
+
+Current Angle: 4.766560
+Initial Angle: 3.488637
+Error: 1.277922
+Left: 99.709340, Right: 100.290660
+Correction: 0.290660
+
+Current Angle: 4.748073
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1d736f7574496e697469616c20416e676c653a20332e343138360a
+
+Current Angle: 4.717170
+Initial Angle: 3.488637
+Error: 1.228532
+Left: 98.371356, Right: 101.628644
+Correction: 1.628644
+
+Current Angle: 4.721365
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1d736f7574496e697469616c20416e676c653a20332e34383832370a
+
+Current Angle: 4.654852
+Initial Angle: 3.488637
+Error: 1.166215
+Left: 99.029488, Right: 100.970512
+Correction: 0.970512
+
+Current Angle: 4.637903
+Initial Angle: 3.488605
+
+Current Angle: 4.518504
+Initial Angle: 3.488637
+Error: 1.029867
+Left: 99.757924, Right: 100.242076
+Correction: 0.242076
+
+Current Angle: 4.512320
+Initial Angle: 3.488644
+
+Current Angle: 4.397066
+Initial Angle: 3.488637
+Error: 0.908429
+Left: 99.784820, Right: 100.215180
+Correction: 0.215180
+
+Current Angle: 4.366174
+Initial Angle: 3.488680
+
+Current Angle: 4.198498
+Initial Angle: 3.488637
+Error: 0.709861
+Left: 99.976031, Right: 100.023969
+Correction: 0.023969
+
+Current Angle: 4.157945
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1d736f7574496e697469616c20416e676c653a20332e3438383606736f75740a
+Current Angle: 4.278259
+Initial Angle: 3.488637
+Error: 0.789622
+Left: 95.910142, Right: 104.089858
+Correction: 4.089858
+
+Current Angle: 4.374488
+Initial Angle: 3.488637
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 757272656e7420416e676c653a20352e3634393535330a
+Initial Angle: 3.488637
+Error: 2.160916
+Left: 92.491606, Right: 107.508394
+Correction: 7.508394
+
+Current Angle: 5.800196
+Initial Angle: 3.488637
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 15736f75744572726f723a20323a20362e3932333234370a
+Initial Angle: 3.488637
+Error: 3.434610
+Left: 89.978517, Right: 110.021483
+Correction: 10.021483
+
+Current Angle: 7.217754
+Initial Angle: 3.488637
+Error: 3.729116
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 28736e697469616c20416e676c653a20332e3438383633370a
+Error: 5.029919
+Left: 89.555661, Right: 110.444339
+Correction: 10.444339
+
+Current Angle: 8.752738
+Initial Angle: 3.488637
+Error: 5.264100
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 28736f75744c6566743a2038392e34383037373220332e3438383633370a
+Error: 7.162968
+Left: 89.569800, Right: 110.430200
+Correction: 10.430200
+
+Current Angle: 10.752949
+Initial Angle: 3.488637
+Error: 7.264312
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 28736f75744c6566743a2039322e3230363137392c2052696768743a20313037370a
+Error: 8.332850
+Left: 86.666651, Right: 113.333349
+Correction: 13.333349
+
+Current Angle: 12.150744
+Initial Angle: 3.488637
+Error: 8.662107
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 28736f75744c6566743a2038342e3433303138372c2052696768743a203131352e3536393831330a75744572726f723a2031302e3837323733340a
+Left: 83.755218, Right: 116.244782
+Correction: 16.244782
+
+Current Angle: 14.658013
+Initial Angle: 3.488637
+Error: 11.169376
+Left: 83.751651, Right: 116.248349
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2031322e3734323538390a
+Left: 82.940420, Right: 117.059580
+Correction: 17.059580
+
+Current Angle: 16.515354
+Initial Angle: 3.488637
+Error: 13.026717
+Left: 82.771326, Right: 117.228674
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2031342e3938353730340a
+Left: 79.515624, Right: 120.484376
+Correction: 20.484376
+
+Current Angle: 18.824755
+Initial Angle: 3.488637
+Error: 15.336118
+Left: 79.127031, Right: 120.872969
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2031372e3735343436330a
+Left: 75.679947, Right: 124.320053
+Correction: 24.320053
+
+Current Angle: 21.660523
+Initial Angle: 3.488637
+Error: 18.171886
+Left: 75.106342, Right: 124.893658
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032312e3438353137350a
+Left: 74.644280, Right: 125.355720
+Correction: 25.355720
+
+Current Angle: 25.301305
+Initial Angle: 3.488637
+Error: 21.812668
+Left: 75.070190, Right: 124.929810
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032332e3730333832350a
+Left: 74.018741, Right: 125.981259
+Correction: 25.981259
+
+Current Angle: 27.492783
+Initial Angle: 3.488637
+Error: 24.004146
+Left: 73.982127, Right: 126.017873
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032352e3539343530300a
+Left: 71.585650, Right: 128.414350
+Correction: 28.414350
+
+Current Angle: 29.412773
+Initial Angle: 3.488637
+Error: 25.924136
+Left: 71.389408, Right: 128.610592
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032372e3837363436370a
+Left: 70.434604, Right: 129.565396
+Correction: 29.565396
+
+Current Angle: 31.658988
+Initial Angle: 3.488637
+Error: 28.170350
+Left: 70.385280, Right: 129.614720
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032392e3637303730370a
+Left: 70.101431, Right: 129.898569
+Correction: 29.898569
+
+Current Angle: 33.386259
+Initial Angle: 3.488637
+Error: 29.897622
+Left: 70.509091, Right: 129.490909
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2033302e3937383439340a
+Left: 72.619888, Right: 127.380112
+Correction: 27.380112
+
+Current Angle: 34.582577
+Initial Angle: 3.488637
+Error: 31.093939
+Left: 72.029950, Right: 127.970050
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2033312e3639353535330a
+Left: 70.815612, Right: 129.184388
+Correction: 29.184388
+
+Current Angle: 35.310805
+Initial Angle: 3.488637
+Error: 31.822167
+Left: 70.541686, Right: 129.458314
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2033312e3631373533390a
+Left: 76.485616, Right: 123.514384
+Correction: 23.514384
+
+Current Angle: 35.006656
+Initial Angle: 3.488637
+Error: 31.518019
+Left: 76.204547, Right: 123.795453
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2033312e3830333731350a
+Left: 68.822851, Right: 131.177149
+Correction: 31.177149
+
+Current Angle: 35.320484
+Initial Angle: 3.488637
+Error: 31.831847
+Left: 70.954608, Right: 129.045392
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2033322e3132323233390a
+Left: 68.076832, Right: 131.923168
+Correction: 31.923168
+
+Current Angle: 35.629277
+Initial Angle: 3.488637
+Error: 32.140640
+Left: 70.132898, Right: 129.867102
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2033322e3531373734360a
+Left: 68.298171, Right: 131.701829
+Correction: 31.701829
+
+Current Angle: 36.000743
+Initial Angle: 3.488637
+Error: 32.512105
+Left: 69.536160, Right: 130.463840
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2033302e3739333730340a
+Left: 76.998094, Right: 123.001906
+Correction: 23.001906
+
+Current Angle: 33.992770
+Initial Angle: 3.488637
+Error: 30.504133
+Left: 77.797913, Right: 122.202087
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032392e3134393133300a
+Left: 80.562457, Right: 119.437543
+Correction: 19.437543
+
+Current Angle: 32.267958
+Initial Angle: 3.488637
+Error: 28.779321
+Left: 80.329710, Right: 119.670290
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032362e3539393239370a
+Left: 80.647752, Right: 119.352248
+Correction: 19.352248
+
+Current Angle: 29.749423
+Initial Angle: 3.488637
+Error: 26.260785
+Left: 79.692814, Right: 120.307186
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032342e3537343235300a
+Left: 79.268024, Right: 120.731976
+Correction: 20.731976
+
+Current Angle: 27.762806
+Initial Angle: 3.488637
+Error: 24.274169
+Left: 78.780747, Right: 121.219253
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032322e3430333331390a
+Left: 77.058841, Right: 122.941159
+Correction: 22.941159
+
+Current Angle: 25.611152
+Initial Angle: 3.488637
+Error: 22.122515
+Left: 78.358748, Right: 121.641252
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2032302e3831393631310a
+Left: 75.659436, Right: 124.340564
+Correction: 24.340564
+
+Current Angle: 24.049160
+Initial Angle: 3.488637
+Error: 20.560523
+Left: 77.640773, Right: 122.359227
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2031392e3031303437350a
+Left: 77.089663, Right: 122.910337
+Correction: 22.910337
+
+Current Angle: 22.249950
+Initial Angle: 3.488637
+Error: 18.761313
+Left: 77.561443, Right: 122.438557
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2031372e3335333930300a
+Left: 73.321734, Right: 126.678266
+Correction: 26.678266
+
+Current Angle: 20.789027
+Initial Angle: 3.488637
+Error: 17.300390
+Left: 71.710093, Right: 128.289907
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2031362e3537313738340a
+Left: 74.180372, Right: 125.819628
+Correction: 25.819628
+
+Current Angle: 20.134972
+Initial Angle: 3.488637
+Error: 16.646334
+Left: 67.603815, Right: 132.396185
+WARNING - pros.serial.devices.vex.v5_user_device:read - Could not decode bytes: 1b736f75744572726f723a2031372e3336363938370a
+Left: 56.843683, Right: 143.156317
+Correction: 43.156317
+
+Current Angle: 21.290459
+Initial Angle: 3.488637
+Error: 17.801822
+Left: 55.956931, Right: 144.043069
+Correction: 44.043069
+
+Current Angle: 21.649051
+Initial Angle: 3.488637
+Error: 18.160414
+Left: 57.974088, Right: 142.025912
+Correction: 42.025912
+
+Current Angle: 21.917795
+Initial Angle: 3.488637
+Error: 18.429158
+Left: 60.443040, Right: 139.556960
+Correction: 39.556960
+
+Current Angle: 22.159416
+Initial Angle: 3.488637
+Error: 18.670778
+Left: 61.042564, Right: 138.957436
+Correction: 38.957436
+
+Current Angle: 22.526349
+Initial Angle: 3.488637
+Error: 19.037711
+Left: 57.004534, Right: 142.995466
+Correction: 42.995466
+
+Current Angle: 23.057943
+Initial Angle: 3.488637
+Error: 19.569306
+Left: 51.701054, Right: 148.298946
+Correction: 48.298946
+
+Current Angle: 23.652626
+Initial Angle: 3.488637
+Error: 20.163989
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 24.284503
+Initial Angle: 3.488637
+Error: 20.795866
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 24.934278
+Initial Angle: 3.488637
+Error: 21.445641
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 25.578441
+Initial Angle: 3.488637
+Error: 22.089803
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 26.206461
+Initial Angle: 3.488637
+Error: 22.717823
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 26.791543
+Initial Angle: 3.488637
+Error: 23.302906
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 27.365943
+Initial Angle: 3.488637
+Error: 23.877306
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 28.006813
+Initial Angle: 3.488637
+Error: 24.518176
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 28.693669
+Initial Angle: 3.488637
+Error: 25.205031
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 29.363031
+Initial Angle: 3.488637
+Error: 25.874394
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 30.007336
+Initial Angle: 3.488637
+Error: 26.518699
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 30.674057
+Initial Angle: 3.488637
+Error: 27.185420
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 31.386473
+Initial Angle: 3.488637
+Error: 27.897835
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 32.103599
+Initial Angle: 3.488637
+Error: 28.614962
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 32.814740
+Initial Angle: 3.488637
+Error: 29.326103
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 33.539585
+Initial Angle: 3.488637
+Error: 30.050948
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 34.288256
+Initial Angle: 3.488637
+Error: 30.799618
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 35.044239
+Initial Angle: 3.488637
+Error: 31.555601
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+
+Current Angle: 35.789313
+Initial Angle: 3.488637
+Error: 32.300676
+Left: 50.000000, Right: 150.000000
+Correction: 50.000000
+

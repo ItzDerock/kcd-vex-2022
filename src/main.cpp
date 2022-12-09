@@ -2,9 +2,9 @@
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "util.hpp"
-#include <sys/_stdint.h>
 
 #include "controllers/auton/auton.hpp"
+#include "controllers/movement/movement.hpp"
 #include "core/config.hpp"
 
 void run_catapult() {
@@ -61,16 +61,20 @@ void initialize() {
   pros::lcd::set_text(1, "[i] Calibrating IMU and POT...");
 
   // calibrate IMU
-  // inertial.reset();
-
   while (inertial->is_calibrating()) {
     pros::delay(10);
   }
+
+  // tare
+  inertial->tare();
 
   catapult_motor->setBrakeMode(AbstractMotor::brakeMode::hold);
 
   // calibrate catapult potentiometer
   catapult_pot->calibrate();
+
+  // start position tracking task
+  // pros::Task position_tracking_task(movement::updatePositionLoop);
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
@@ -94,12 +98,16 @@ void disabled() { pros::lcd::set_text(1, "[i] Robot Disabled"); }
 void competition_initialize() {
   // recalibrate IMU
   pros::lcd::set_text(1, "[i] Recalibrating IMU (competition)...");
-  // inertial.reset();
+
   catapult_pot->calibrate();
 
   while (inertial->is_calibrating()) {
     pros::delay(10);
   }
+
+  inertial->tare();
+
+  movement::resetPosition();
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }

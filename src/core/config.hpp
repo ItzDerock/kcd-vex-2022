@@ -1,5 +1,6 @@
 #include "main.h"
 #include "okapi/api/chassis/controller/odomChassisController.hpp"
+#include "pros/rtos.hpp"
 #include <memory>
 
 #ifndef CONFIG_HPP
@@ -47,6 +48,7 @@ extern std::shared_ptr<Motor> roller_motor;
 
 extern bool chassis_break;
 extern bool auto_reload;
+extern pros::Mutex inertial_mutex;
 
 // catapult states
 enum Catapult { REELING, READY_TO_LAUNCH, LAUNCHING, IDLE };

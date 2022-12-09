@@ -20,7 +20,7 @@ std::shared_ptr<OdomChassisController> chassis =
                     DRIVE_BOTTOM_LEFT)
         .withDimensions(AbstractMotor::gearset::green,
                         {{4_in, 12.5_in}, imev5GreenTPR})
-        .withOdometry()
+        .withOdometry(StateMode::FRAME_TRANSFORMATION)
         .buildOdometry();
 //  .build();
 
@@ -56,6 +56,11 @@ std::shared_ptr<Motor> roller_motor = std::make_shared<okapi::Motor>(
  */
 bool chassis_break = false;
 bool auto_reload = true;
+
+/**
+ * Mutexes
+ */
+pros::Mutex inertial_mutex;
 
 // catapult states
 Catapult catapult_state = IDLE;

@@ -1,0 +1,5 @@
+ERROR - pros.cli.main:main - [Errno 2] could not open port logs.txt: [Errno 2] No such file or directory: 'logs.txt'
+  File "/home/derock/.local/lib/python3.10/site-packages/serial/serialposix.py", line 325, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port logs.txt: [Errno 2] No such file or directory: 'logs.txt'
+We detected something went wrong! Do you want to send a report? [y/N]: 

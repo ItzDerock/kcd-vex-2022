@@ -1,2 +1,5 @@
 CompileFlags:
   Add: [-std=c++17]
+
+Diagnostics:
+  Suppress: 'pp_including_mainfile_in_preamble'
