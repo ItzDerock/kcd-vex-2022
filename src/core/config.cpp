@@ -8,7 +8,8 @@
 /**
  * define inertial sensor
  */
-std::shared_ptr<IMU> inertial = std::make_shared<IMU>(INERTIAL_PORT);
+std::shared_ptr<pros::IMU> inertial =
+    std::make_shared<pros::IMU>(INERTIAL_PORT);
 
 /**
  * define chassis and model

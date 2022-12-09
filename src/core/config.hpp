@@ -39,7 +39,7 @@
 
 extern std::shared_ptr<OdomChassisController> chassis;
 extern std::shared_ptr<XDriveModel> model;
-extern std::shared_ptr<IMU> inertial;
+extern std::shared_ptr<pros::IMU> inertial;
 extern std::shared_ptr<Motor> catapult_motor;
 extern std::shared_ptr<pros::ADIAnalogIn> catapult_pot;
 extern std::shared_ptr<Motor> intake_motor;

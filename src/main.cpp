@@ -15,7 +15,7 @@ void run_catapult() {
   // only run if catapult status is "REELING"
   if (catapult_state == REELING) {
     // move until 1200 on potentiometer
-    if (catapult_pot->get_value() < 1150) {
+    if (catapult_pot->get_value() < 1200) {
       if (catapult_motor->getTargetVelocity() == 0) {
         catapult_motor->moveVelocity(100);
       }
@@ -61,9 +61,9 @@ void initialize() {
   pros::lcd::set_text(1, "[i] Calibrating IMU and POT...");
 
   // calibrate IMU
-  inertial->calibrate();
+  // inertial.reset();
 
-  while (inertial->isCalibrating()) {
+  while (inertial->is_calibrating()) {
     pros::delay(10);
   }
 
@@ -94,10 +94,10 @@ void disabled() { pros::lcd::set_text(1, "[i] Robot Disabled"); }
 void competition_initialize() {
   // recalibrate IMU
   pros::lcd::set_text(1, "[i] Recalibrating IMU (competition)...");
-  inertial->calibrate();
+  // inertial.reset();
   catapult_pot->calibrate();
 
-  while (inertial->isCalibrating()) {
+  while (inertial->is_calibrating()) {
     pros::delay(10);
   }
 

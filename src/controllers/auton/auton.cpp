@@ -1,5 +1,6 @@
 #include "auton.hpp"
 #include "../../core/config.hpp"
+#include "../movement/movement.hpp"
 #include "main.h"
 #include "pros/llemu.hpp"
 
@@ -35,7 +36,7 @@ void run() {
   //   break;
   // }
 
-  chassis->moveDistance(10_in);
+  movement::moveDistance(47_in);
 }
 
 void updateDisplay() {
