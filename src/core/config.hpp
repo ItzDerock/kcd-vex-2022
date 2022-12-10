@@ -1,5 +1,6 @@
 #include "main.h"
 #include "okapi/api/chassis/controller/odomChassisController.hpp"
+#include "pros/adi.hpp"
 #include "pros/rtos.hpp"
 #include <memory>
 
@@ -33,6 +34,11 @@
 #define ROLLER_MOTOR 20
 
 /**
+ * END GAME
+ */
+#define END_GAME_PNEUMATIC 2
+
+/**
  * utility macros
  */
 #define BUTTON(x) if (master.get_digital_new_press(x))
@@ -45,13 +51,13 @@ extern std::shared_ptr<Motor> catapult_motor;
 extern std::shared_ptr<pros::ADIAnalogIn> catapult_pot;
 extern std::shared_ptr<Motor> intake_motor;
 extern std::shared_ptr<Motor> roller_motor;
+extern std::shared_ptr<pros::ADIDigitalOut> endgame_launcher;
 
 extern bool chassis_break;
 extern bool auto_reload;
-extern pros::Mutex inertial_mutex;
 
 // catapult states
-enum Catapult { REELING, READY_TO_LAUNCH, LAUNCHING, IDLE };
+enum Catapult { REELING, READY_TO_LAUNCH, LAUNCHING, IDLE, DISABLED };
 extern Catapult catapult_state;
 
 #endif

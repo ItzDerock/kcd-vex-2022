@@ -6,6 +6,25 @@
 #include "controllers/auton/auton.hpp"
 #include "controllers/movement/movement.hpp"
 #include "core/config.hpp"
+
+int DANGEROUS_OVERRIDE_LAST_PRESS = -1;
+
+void endgame() {
+  if (catapult_state == DISABLED) {
+    endgame_launcher->set_value(1);
+  } else if (catapult_state != IDLE) {
+    // move until 1200 on potentiometer
+    catapult_motor->moveVelocity(100);
+    while (catapult_pot->get_value() > 1200) {
+      pros::delay(10);
+    }
+    catapult_motor->moveVelocity(0);
+
+    catapult_state = IDLE;
+    endgame_launcher->set_value(1);
+  }
+}
+
 void run_catapult() {
   if (catapult_state == IDLE && auto_reload) {
     catapult_state = REELING;
@@ -26,7 +45,7 @@ void run_catapult() {
     // only run if catapult status is "LAUNCHING"
     if (catapult_state == LAUNCHING) {
       // move until 15 on potentiometer
-      if (catapult_pot->get_value() > 700) {
+      if (catapult_pot->get_value() > 1200) {
         if (catapult_motor->getTargetVelocity() == 0) {
           catapult_motor->moveVelocity(75);
         }
@@ -234,7 +253,8 @@ void opcontrol() {
 
       case READY_TO_LAUNCH:
         // spin intake_motor until multiple of 360
-        // auto target = intake_motor->getPosition();
+        auto needed = 360 - std::fmod(intake_motor->getPosition(), 360);
+        intake_motor->moveRelative(needed, 200);
 
         // set state to LAUNCHING
         catapult_state = LAUNCHING;
@@ -256,6 +276,35 @@ void opcontrol() {
     BUTTON(pros::E_CONTROLLER_DIGITAL_X) {
       auto_reload = !auto_reload;
       pros::lcd::set_text(7, "Auto Reload: " + std::to_string(auto_reload));
+    }
+
+    // launch endgame
+    BUTTON(pros::E_CONTROLLER_DIGITAL_LEFT) { endgame(); }
+
+    // disable catapult
+    BUTTON(pros::E_CONTROLLER_DIGITAL_RIGHT) {
+      if (pros::millis() - DANGEROUS_OVERRIDE_LAST_PRESS < 1000) {
+        // if pressed twice within 1 second, disable catapult
+        catapult_state = DISABLED;
+        catapult_motor->moveVelocity(0);
+
+        // rumble controller
+        master.rumble(".--");
+      } else {
+        // if pressed once, set last press to current time
+        DANGEROUS_OVERRIDE_LAST_PRESS = pros::millis();
+      }
+    }
+
+    if (catapult_state == DISABLED) {
+      // up/down manual override
+      HELD(pros::E_CONTROLLER_DIGITAL_UP) { catapult_motor->moveVelocity(100); }
+      else HELD(pros::E_CONTROLLER_DIGITAL_DOWN) {
+        catapult_motor->moveVelocity(-100);
+      }
+      else {
+        catapult_motor->moveVelocity(0);
+      }
     }
 
     // display potentiometer value and catapult_status

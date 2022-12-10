@@ -52,6 +52,12 @@ std::shared_ptr<Motor> roller_motor = std::make_shared<okapi::Motor>(
     AbstractMotor::encoderUnits::degrees);
 
 /**
+ * Define endgame
+ */
+std::shared_ptr<pros::ADIDigitalOut> endgame_launcher =
+    std::make_shared<pros::ADIDigitalOut>(END_GAME_PNEUMATIC);
+
+/**
  * states
  */
 bool chassis_break = false;
