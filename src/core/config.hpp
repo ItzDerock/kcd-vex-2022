@@ -14,7 +14,7 @@
 #define DRIVE_BOTTOM_LEFT 3
 #define DRIVE_BOTTOM_RIGHT 4
 
-#define INERTIAL_PORT 11
+#define INERTIAL_PORT 10
 
 /**
  * Catapult ports
@@ -30,7 +30,7 @@
 /**
  * Roller thing port
  */
-#define ROLLER_MOTOR 7
+#define ROLLER_MOTOR 20
 
 /**
  * utility macros
