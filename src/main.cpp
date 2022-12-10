@@ -6,7 +6,6 @@
 #include "controllers/auton/auton.hpp"
 #include "controllers/movement/movement.hpp"
 #include "core/config.hpp"
-
 void run_catapult() {
   if (catapult_state == IDLE && auto_reload) {
     catapult_state = REELING;
@@ -15,7 +14,7 @@ void run_catapult() {
   // only run if catapult status is "REELING"
   if (catapult_state == REELING) {
     // move until 1200 on potentiometer
-    if (catapult_pot->get_value() < 1200) {
+    if (catapult_pot->get_value() < 2800) {
       if (catapult_motor->getTargetVelocity() == 0) {
         catapult_motor->moveVelocity(100);
       }
@@ -27,7 +26,7 @@ void run_catapult() {
     // only run if catapult status is "LAUNCHING"
     if (catapult_state == LAUNCHING) {
       // move until 15 on potentiometer
-      if (catapult_pot->get_value() > 15) {
+      if (catapult_pot->get_value() > 700) {
         if (catapult_motor->getTargetVelocity() == 0) {
           catapult_motor->moveVelocity(75);
         }
@@ -73,8 +72,8 @@ void initialize() {
   // calibrate catapult potentiometer
   catapult_pot->calibrate();
 
-  // start position tracking task
-  // pros::Task position_tracking_task(movement::updatePositionLoop);
+  // start task to update position on screen
+  // pros::Task updatePositionOnScreenTask(movement::updatePositionLoop);
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
@@ -150,9 +149,9 @@ void opcontrol() {
     run_catapult();
 
     // get joystick values
-    double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
     double iforwardSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-    double irotSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    double irotSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
     // scale joystick values
     double rightSpeed = utils::mapValue(irightSpeed, -127, 127, -1, 1);
@@ -234,6 +233,9 @@ void opcontrol() {
         break;
 
       case READY_TO_LAUNCH:
+        // spin intake_motor until multiple of 360
+        // auto target = intake_motor->getPosition();
+
         // set state to LAUNCHING
         catapult_state = LAUNCHING;
         catapult_motor->moveVelocity(100);

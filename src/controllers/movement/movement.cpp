@@ -1,9 +1,11 @@
-// #pragma once
+#pragma once
 
 #include "../../core/config.hpp"
 // #include "../../util.hpp"
 #include "main.h"
+#include "movement.hpp"
 #include "pid.hpp"
+#include <cmath>
 
 double wrap_degrees(double angle) { return std::fmod(angle + 180, 360) - 180; }
 
@@ -72,5 +74,28 @@ void moveDistance(okapi::QLength distance, int maxVelPercent) {
 }
 
 void moveDistance(QLength distance) { moveDistance(distance, 600); }
+
+void turnAngle(double angle) {
+  double start = inertial->get_heading();
+  double target = start + angle;
+
+  if (target > 180) {
+    target -= 360;
+  } else if (target < -180) {
+    target += 360;
+  }
+
+  while (std::abs(inertial->get_heading() - target) > 1) {
+    double error = target - inertial->get_heading();
+    double speed = error * 0.5;
+    if (speed > 100) {
+      speed = 100;
+    } else if (speed < -100) {
+      speed = -100;
+    }
+    chassis->getModel()->tank(speed, -speed);
+    pros::delay(10);
+  }
+}
 
 } // namespace movement

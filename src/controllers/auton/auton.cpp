@@ -7,6 +7,8 @@
 #ifndef AUTON_CPP
 #define AUTON_CPP
 
+#define SLOW 300
+
 namespace auton {
 
 AutonType auton_type = NONE;
@@ -36,8 +38,23 @@ void run() {
   //   break;
   // }
 
-  // chassis->moveDistance(47_in);
-  movement::moveDistance(47_in, 100);
+  // move backwards slowly and spin roller
+  chassis->setMaxVelocity(SLOW);
+  chassis->moveDistanceAsync(-5_in);
+  roller_motor->moveRelative(10, 100);
+  chassis->setMaxVelocity(600);
+
+  // chassis->moveDistance(120_in);
+  // x-drive move at 45 deg angle for 120 inches
+  chassis->driveToPoint({120_in, 120_in});
+  movement::turnAngle(90);
+
+  chassis->setMaxVelocity(SLOW);
+  chassis->moveDistanceAsync(-5_in);
+  roller_motor->moveRelative(10, 100);
+  chassis->setMaxVelocity(600);
+
+  // movement::moveDistance(47_in, 100);
 }
 
 void updateDisplay() {

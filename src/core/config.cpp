@@ -19,10 +19,10 @@ std::shared_ptr<OdomChassisController> chassis =
         .withMotors(DRIVE_TOP_LEFT, -DRIVE_TOP_RIGHT, -DRIVE_BOTTOM_RIGHT,
                     DRIVE_BOTTOM_LEFT)
         .withDimensions(AbstractMotor::gearset::green,
-                        {{4_in, 12.5_in}, imev5GreenTPR})
+                        {{4_in, 12_in}, imev5GreenTPR})
+        .withGains({0.001, 0, 0.0001}, {0.001, 0, 0.0001}, {0.001, 0, 0.0001})
         .withOdometry(StateMode::FRAME_TRANSFORMATION)
         .buildOdometry();
-//  .build();
 
 std::shared_ptr<XDriveModel> model =
     std::static_pointer_cast<XDriveModel>(chassis->getModel());

@@ -2,11 +2,18 @@
 #define MOVEMENT_HPP
 
 #include "okapi/api/units/QLength.hpp"
+
 namespace movement {
 
-extern double x;
-extern double y;
-extern double z;
+class Point {
+public:
+  Point(double x, double y) : x(x), y(y){};
+  double x;
+  double y;
+};
+
+extern Point previousPosition;
+extern Point position;
 
 void updatePosition();
 void updatePositionLoop();

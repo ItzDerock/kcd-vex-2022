@@ -542,3 +542,4 @@ Error: 32.300676
 Left: 50.000000, Right: 150.000000
 Correction: 50.000000
 
+cWARNING - pros.serial.terminal.terminal:stop - Stopping terminal

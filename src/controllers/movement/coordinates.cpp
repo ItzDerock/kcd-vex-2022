@@ -5,30 +5,45 @@
 
 namespace movement {
 
-double x = 0;
-double y = 0;
-double z = 0;
+movement::Point previousPosition(0, 0);
+movement::Point position(0, 0);
+double previous_time = pros::millis() / 1000.0;
 
 // update using inertial (pros::IMU)
-void updatePosition(int lastUpdate) {
-  // inertial_mutex.take();
+void updatePosition() {
+  double curr_time = pros::millis() / 1000.0;
+  double dt = curr_time - previous_time;
+
+  // get accel
   auto accel = inertial->get_accel();
-  // inertial_mutex.give();
 
   if (errno != 0) {
     printf("Error: %s (%d)", strerror(errno), errno);
     return;
   }
 
-  // turn acceleration (in Gs) into distance traveled
-  // x += accel.x *
+  // if accel is under 0.05 then it is probably noise
+  if (std::abs(accel.x) < 0.05) {
+    accel.x = 0;
+  }
+  if (std::abs(accel.y) < 0.05) {
+    accel.y = 0;
+  }
 
-  x += accel.x;
-  y += accel.y;
-  z += accel.z;
+  // Calculate the change in position based on the acceleration values and the
+  // time elapsed
+  double dx = (accel.x + previousPosition.x) * dt / 2;
+  double dy = (accel.y + previousPosition.y) * dt / 2;
 
-  pros::lcd::set_text(2, "X: " + std::to_string(x) + " Y: " +
-                             std::to_string(y) + " Z: " + std::to_string(z));
+  position.x += dx;
+  position.y += dy;
+
+  // update previous
+  previousPosition.x = accel.x;
+  previousPosition.y = accel.y;
+
+  pros::lcd::set_text(2, "X: " + std::to_string(position.x) +
+                             " Y: " + std::to_string(position.y));
 }
 
 void updatePositionLoop() {
@@ -39,9 +54,8 @@ void updatePositionLoop() {
 }
 
 void resetPosition() {
-  x = 0;
-  y = 0;
-  z = 0;
+  position.x = 0;
+  position.y = 0;
 }
 
 } // namespace movement
