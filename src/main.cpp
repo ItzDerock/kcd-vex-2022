@@ -8,21 +8,34 @@
 #include "core/config.hpp"
 
 int DANGEROUS_OVERRIDE_LAST_PRESS = -1;
+bool endgame_launching = false;
+
+#define CATAPULT_POT_LOADING 2723
+#define CATAPULT_POT_LAUNCHED 1100
 
 void endgame() {
+  if (endgame_launching)
+    return;
+  endgame_launching = true;
+
   if (catapult_state == DISABLED) {
     endgame_launcher->set_value(1);
   } else if (catapult_state != IDLE) {
+    catapult_state = DISABLED;
+
     // move until 1200 on potentiometer
     catapult_motor->moveVelocity(100);
-    while (catapult_pot->get_value() > 1200) {
+    while (catapult_pot->get_value() > CATAPULT_POT_LAUNCHED) {
       pros::delay(10);
     }
     catapult_motor->moveVelocity(0);
 
-    catapult_state = IDLE;
+    pros::delay(1500);
+
     endgame_launcher->set_value(1);
   }
+
+  endgame_launching = false;
 }
 
 void run_catapult() {
@@ -33,7 +46,7 @@ void run_catapult() {
   // only run if catapult status is "REELING"
   if (catapult_state == REELING) {
     // move until 1200 on potentiometer
-    if (catapult_pot->get_value() < 2800) {
+    if (catapult_pot->get_value() < CATAPULT_POT_LOADING) {
       if (catapult_motor->getTargetVelocity() == 0) {
         catapult_motor->moveVelocity(100);
       }
@@ -45,7 +58,7 @@ void run_catapult() {
     // only run if catapult status is "LAUNCHING"
     if (catapult_state == LAUNCHING) {
       // move until 15 on potentiometer
-      if (catapult_pot->get_value() > 1200) {
+      if (catapult_pot->get_value() > CATAPULT_POT_LAUNCHED) {
         if (catapult_motor->getTargetVelocity() == 0) {
           catapult_motor->moveVelocity(75);
         }
@@ -238,10 +251,11 @@ void opcontrol() {
                std::to_string(intake_motor->getTargetVelocity()));
 
     // toggle flywheel
-    BUTTON(pros::E_CONTROLLER_DIGITAL_L1) {
+    BUTTON(pros::E_CONTROLLER_DIGITAL_Y) {
       switch (catapult_state) {
       case REELING:
       case LAUNCHING:
+      case DISABLED:
         // pass
         break;
 
@@ -253,8 +267,8 @@ void opcontrol() {
 
       case READY_TO_LAUNCH:
         // spin intake_motor until multiple of 360
-        auto needed = 360 - std::fmod(intake_motor->getPosition(), 360);
-        intake_motor->moveRelative(needed, 200);
+        // auto needed = 360 - std::fmod(intake_motor->getPosition(), 360);
+        // intake_motor->moveRelative(needed, 200);
 
         // set state to LAUNCHING
         catapult_state = LAUNCHING;
@@ -279,7 +293,12 @@ void opcontrol() {
     }
 
     // launch endgame
-    BUTTON(pros::E_CONTROLLER_DIGITAL_LEFT) { endgame(); }
+    BUTTON(pros::E_CONTROLLER_DIGITAL_LEFT) {
+      endgame();
+      // run endgame() as a task
+      // auto task = pros::Task(endgame);
+      // printf("endgame task started: %d", task.get_state());
+    }
 
     // disable catapult
     BUTTON(pros::E_CONTROLLER_DIGITAL_RIGHT) {
