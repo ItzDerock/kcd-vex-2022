@@ -215,8 +215,9 @@ void opcontrol() {
         heading *= (M_PI / 180);
 
         // calculate the new rightSpeed and forwardSpeed
-        rightSpeed = rightSpeed * cos(heading) - forwardSpeed * sin(heading);
+        double temp = rightSpeed * cos(heading) - forwardSpeed * sin(heading);
         forwardSpeed = rightSpeed * sin(heading) + forwardSpeed * cos(heading);
+        rightSpeed = temp;
       }
 
       // set chassis speed
