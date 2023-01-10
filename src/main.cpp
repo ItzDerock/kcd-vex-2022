@@ -3,12 +3,22 @@
 #include "pros/misc.h"
 #include "util.hpp"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #include "controllers/auton/auton.hpp"
 #include "controllers/movement/movement.hpp"
 #include "core/config.hpp"
 
 int DANGEROUS_OVERRIDE_LAST_PRESS = -1;
 bool endgame_launching = false;
+
+enum DRIVE_MODE { FIELD_CENTERED, ROBOT_CENTERED };
+DRIVE_MODE drive_mode = FIELD_CENTERED;
 
 #define CATAPULT_POT_LOADING 2723
 #define CATAPULT_POT_LAUNCHED 1100
@@ -196,6 +206,19 @@ void opcontrol() {
       pros::lcd::set_text(3, "Chassis: Stopped");
       chassis->stop();
     } else {
+      if (drive_mode == FIELD_CENTERED) {
+        // field centered driving
+        // convert the values using the heading by imu.get_heading();
+        double heading = inertial->get_heading();
+
+        // convert input to radians
+        heading *= (M_PI / 180);
+
+        // calculate the new rightSpeed and forwardSpeed
+        rightSpeed = rightSpeed * cos(heading) - forwardSpeed * sin(heading);
+        forwardSpeed = rightSpeed * sin(heading) + forwardSpeed * cos(heading);
+      }
+
       // set chassis speed
       model->xArcade(rightSpeed, forwardSpeed, rotationSpeed);
 
@@ -323,6 +346,15 @@ void opcontrol() {
       }
       else {
         catapult_motor->moveVelocity(0);
+      }
+    }
+
+    // toggle field mode
+    BUTTON(pros::E_CONTROLLER_DIGITAL_A) {
+      if (drive_mode == FIELD_CENTERED) {
+        drive_mode = ROBOT_CENTERED;
+      } else {
+        drive_mode = FIELD_CENTERED;
       }
     }
 
