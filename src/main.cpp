@@ -115,7 +115,7 @@ void initialize() {
   catapult_pot->calibrate();
 
   // start task to update position on screen
-  // pros::Task updatePositionOnScreenTask(movement::updatePositionLoop);
+  pros::Task updatePositionOnScreenTask(movement::updatePositionLoop);
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
