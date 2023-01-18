@@ -1,5 +1,6 @@
 #include "main.h"
 #include "okapi/api/chassis/controller/odomChassisController.hpp"
+#include "okapi/impl/device/rotarysensor/adiEncoder.hpp"
 #include "pros/adi.hpp"
 #include "pros/rtos.hpp"
 #include <memory>
@@ -39,6 +40,18 @@
 #define END_GAME_PNEUMATIC 2
 
 /**
+ * Odometry
+ */
+#define ODOM_RIGHT_1 'A'
+#define ODOM_RIGHT_2 'B'
+
+#define ODOM_LEFT_1 'C'
+#define ODOM_LEFT_2 'D'
+
+#define ODOM_MIDDLE_1 'E'
+#define ODOM_MIDDLE_2 'F'
+
+/**
  * utility macros
  */
 #define BUTTON(x) if (master.get_digital_new_press(x))
@@ -52,6 +65,9 @@ extern std::shared_ptr<pros::ADIAnalogIn> catapult_pot;
 extern std::shared_ptr<Motor> intake_motor;
 extern std::shared_ptr<Motor> roller_motor;
 extern std::shared_ptr<pros::ADIDigitalOut> endgame_launcher;
+extern std::shared_ptr<ADIEncoder> left;
+extern std::shared_ptr<ADIEncoder> right;
+extern std::shared_ptr<ADIEncoder> middle;
 
 extern bool chassis_break;
 extern bool auto_reload;

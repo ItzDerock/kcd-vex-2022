@@ -58,6 +58,16 @@ std::shared_ptr<pros::ADIDigitalOut> endgame_launcher =
     std::make_shared<pros::ADIDigitalOut>(END_GAME_PNEUMATIC);
 
 /**
+ * Define tracking wheels
+ */
+std::shared_ptr<ADIEncoder> left =
+    std::make_shared<ADIEncoder>(ODOM_LEFT_1, ODOM_LEFT_2);
+std::shared_ptr<ADIEncoder> right =
+    std::make_shared<ADIEncoder>(ODOM_RIGHT_1, ODOM_RIGHT_2);
+std::shared_ptr<ADIEncoder> middle =
+    std::make_shared<ADIEncoder>(ODOM_MIDDLE_1, ODOM_MIDDLE_2);
+
+/**
  * states
  */
 bool chassis_break = false;

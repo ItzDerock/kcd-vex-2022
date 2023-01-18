@@ -3,13 +3,6 @@
 #include "pros/misc.h"
 #include "util.hpp"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 #include "controllers/auton/auton.hpp"
 #include "controllers/movement/movement.hpp"
 #include "core/config.hpp"
@@ -125,7 +118,10 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() { pros::lcd::set_text(1, "[i] Robot Disabled"); }
+void disabled() {
+  movement::resetPosition();
+  pros::lcd::set_text(1, "[i] Robot Disabled");
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -190,6 +186,9 @@ void opcontrol() {
     // run catapult updater
     run_catapult();
 
+    // position updater
+    // movement::updatePosition();
+
     // get joystick values
     double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
     double iforwardSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -248,6 +247,8 @@ void opcontrol() {
 
       pros::lcd::set_text(4, "Chassis Break: " + std::to_string(chassis_break));
     }
+
+    // BUTTON(pros::E_CONTROLLER_DIGITAL_R2) { movement::updatePositionLoop(); }
 
     // toggle intake
     BUTTON(pros::E_CONTROLLER_DIGITAL_R1) {
