@@ -200,8 +200,8 @@ void opcontrol() {
     double rotationSpeed = utils::mapValue(irotSpeed, -127, 127, -1, 1);
 
     // deadzone, if all values are below 0.1 return
-    if (fabs(rightSpeed) < 0.1 && fabs(forwardSpeed) < 0.1 &&
-        fabs(rotationSpeed) < 0.1) {
+    if (fabs(rightSpeed) < 0.01 && fabs(forwardSpeed) < 0.01 &&
+        fabs(rotationSpeed) < 0.01) {
       pros::lcd::set_text(3, "Chassis: Stopped");
       chassis->stop();
     } else {
