@@ -14,20 +14,7 @@ public:
   double angle;
 };
 
-extern Point previousPosition;
-extern Point position;
+void moveTo(double x, double y, double finalAngle);
 
-void updatePosition();
-void updatePositionLoop();
-void resetPosition();
-
-void moveDistance(okapi::QLength distance);
-void moveDistance(okapi::QLength distance, int maxVelocity);
-void turnAngle(double angle);
-void moveDistanceAsync(double distance);
-void turnAngleAsync(double angle);
-void waitUntilSettled();
-void stop();
 } // namespace movement
-
 #endif // MOVEMENT_HPP

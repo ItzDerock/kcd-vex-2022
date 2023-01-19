@@ -9,7 +9,7 @@
 
 // constants
 // #define BACK_ENC_OFFSET = 5.75;
-double BACK_ENC_OFFSET = 5.75;
+double BACK_ENC_OFFSET = 7.5;
 
 // GLOBAL COORDINATES
 movement::Point odom::globalPoint = {0, 0, 0};
@@ -44,6 +44,8 @@ void odom::updateSensors() {
   rightEnc = utils::degToInch(right->get());
   backEnc = utils::degToInch(-middle->get());
 
+  // printf("Got: %d, %d, %d\n", leftEnc, rightEnc, backEnc);
+
   // find deltas
   deltaLeftEnc = leftEnc - prevLeftEnc;
   deltaRightEnc = rightEnc - prevRightEnc;
@@ -52,7 +54,7 @@ void odom::updateSensors() {
   // set prev values
   prevLeftEnc = leftEnc;
   prevRightEnc = rightEnc;
-  prevBackEnc = rightEnc;
+  prevBackEnc = backEnc;
 
   // get current angle
   currentAngle = utils::getRadians(inertial->get_rotation());
@@ -106,8 +108,15 @@ void odom::setPosition(double newX, double newY, double newAngle) {
 // ODOMETRY THREAD
 void odom::run() {
   while (true) {
+    // wait for interial
+    while (inertial->is_calibrating())
+      pros::delay(20);
+
     odom::updateSensors();
     odom::updatePosition();
+
+    pros::lcd::set_text(2, "X: " + std::to_string(globalPoint.x) +
+                               " Y: " + std::to_string(globalPoint.y));
 
     pros::delay(10);
   }

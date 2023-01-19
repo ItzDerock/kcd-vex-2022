@@ -1,4 +1,5 @@
 #include "main.h"
+#include "controllers/movement/odom.hpp"
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "util.hpp"
@@ -96,19 +97,26 @@ void initialize() {
 
   // calibrate IMU
   while (inertial->is_calibrating()) {
+    if (errno != 0) {
+      pros::lcd::set_text(1, "[!] IMU Error " + std::to_string(errno));
+      printf("IMU Error %s (%d)", strerror(errno), errno);
+    } else {
+      printf("IMU Calibrating...");
+    }
+
     pros::delay(10);
   }
 
   // tare
   inertial->tare();
-
   catapult_motor->setBrakeMode(AbstractMotor::brakeMode::hold);
 
   // calibrate catapult potentiometer
   catapult_pot->calibrate();
 
   // start task to update position on screen
-  pros::Task updatePositionOnScreenTask(movement::updatePositionLoop);
+  // pros::Task updatePositionOnScreenTask(movement:: updatePositionLoop);
+  pros::Task odometry(odom::run);
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
@@ -119,7 +127,7 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
-  movement::resetPosition();
+  // movement::resetPosition();
   pros::lcd::set_text(1, "[i] Robot Disabled");
 }
 
@@ -144,7 +152,7 @@ void competition_initialize() {
 
   inertial->tare();
 
-  movement::resetPosition();
+  odom::reset();
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }

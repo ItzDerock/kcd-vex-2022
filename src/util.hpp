@@ -30,5 +30,24 @@ inline double inchToDeg(double inch) { return (inch / (M_PI * 2.75)) * 360; }
 
 // conversions (angles)
 inline double getRadians(double deg) { return (deg * M_PI) / 180; }
+inline double angleWrap(double angle) {
+  while (angle < -M_PI) {
+    angle += 2 * M_PI;
+  }
+  while (angle > M_PI) {
+    angle -= 2 * M_PI;
+  }
+  return angle;
+}
+
+inline double compressAngle(double startAngle, double angle) {
+  while (angle <= startAngle - M_PI * 2) {
+    angle += M_PI * 2;
+  }
+  while (angle >= startAngle + M_PI * 2) {
+    angle -= M_PI * 2;
+  }
+  return angle;
+}
 
 } // namespace utils

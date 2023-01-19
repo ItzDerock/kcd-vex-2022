@@ -1,101 +1,106 @@
 #pragma once
 
-#include "../../core/config.hpp"
-// #include "../../util.hpp"
-#include "main.h"
 #include "movement.hpp"
+#include "../../core/config.hpp"
+#include "../../util.hpp"
+#include "main.h"
+#include "odom.hpp"
 #include "pid.hpp"
 #include <cmath>
+
+double kP = 12;
+double kD = 7.5;
+double turn_kP = 175;
+double turn_kD = 100;
 
 double wrap_degrees(double angle) { return std::fmod(angle + 180, 360) - 180; }
 
 namespace movement {
 
-void moveDistance(okapi::QLength distance, int maxVelPercent) {
-  // create the bounds for motor speeds in tank drive
-  double maxSpeed = maxVelPercent / 100.0 * 127;
+void setRawVelocity(double LF, double LB, double RF, double RB) {
+  auto blMotor = model->getBottomLeftMotor();
+  auto brMotor = model->getBottomRightMotor();
+  auto tlMotor = model->getTopLeftMotor();
+  auto trMotor = model->getTopRightMotor();
 
-  // Create a PID controller with appropriate constants for IMU drift correction
-  PIDController pidController(0.5, 0.5, 0.3, -(maxVelPercent / 2),
-                              (maxVelPercent / 2));
+  // set the values
+  blMotor->moveVelocity(LB);
+  brMotor->moveVelocity(RB);
+  tlMotor->moveVelocity(LF);
+  trMotor->moveVelocity(RF);
 
-  // Set the target distance and initial error
-  double targetDistance = distance.convert(meter);
-  double error = targetDistance;
-
-  // Set the initial IMU angle and previous error for the PID controller
-  double initialAngle = inertial->get_heading();
-  pidController.previousError = 0;
-
-  // Set the initial time for calculating the derivative term in the PID
-  // controller
-  double initialTime = pros::millis();
-
-  double currentAngle = inertial->get_heading();
-
-  int i = 0;
-  // Loop until the error is within a certain tolerance
-  while (i < 1000) {
-    i++;
-    // Calculate the current time and elapsed time since the last iteration
-    double currentTime = pros::millis();
-    double dt = (currentTime - initialTime) / 1000.0;
-
-    // Get the current IMU angle and calculate the error
-    currentAngle = inertial->get_heading();
-    error = wrap_degrees(currentAngle - initialAngle);
-
-    printf("Current Angle: %f\n", currentAngle);
-    printf("Initial Angle: %f\n", initialAngle);
-    printf("Error: %f\n", error);
-
-    // Calculate the correction output from the PID controller
-    double correction = pidController.calculate(error, dt);
-
-    // Calculate the left and right velocities
-    double left = maxVelPercent - correction;
-    double right = maxVelPercent + correction;
-
-    printf("Left: %f, Right: %f\n", left, right);
-    printf("Correction: %f\n\n", correction);
-
-    // Set the chassis speeds
-    model->tank(left, right);
-
-    // Update the initial time for the next iteration
-    initialTime = currentTime;
-
-    // Delay the loop to prevent hogging the CPU
-    pros::delay(10);
-  }
-
-  // Stop the chassis once the target distance is reached
-  chassis->stop();
+  // print velocities
+  printf("LF: %f, LB: %f, RF: %f, RB: %f\n", LF, LB, RF, RB);
 }
 
-void moveDistance(QLength distance) { moveDistance(distance, 600); }
+void moveTo(double x, double y, double finalAngle) {
+  double startAngle = odom::globalPoint.angle;
 
-void turnAngle(double angle) {
-  double start = inertial->get_heading();
-  double target = start + angle;
+  // some PID variables
+  double derivative_x = 0.0;
+  double derivative_y = 0.0;
+  double prevError_x = 0.0;
+  double prevError_y = 0.0;
+  double turn_prevError = 0.0;
 
-  if (target > 180) {
-    target -= 360;
-  } else if (target < -180) {
-    target += 360;
-  }
+  while (true) {
+    // Calculates distance and angle of the current point to the target point
+    double distanceToTarget =
+        hypot(x - odom::globalPoint.x, y - odom::globalPoint.y);
+    // dist = distanceToTarget; // for multitasking
+    double angleToTarget =
+        atan2(y - odom::globalPoint.y, x - odom::globalPoint.x);
+    double relativeAngleToTarget =
+        utils::angleWrap(angleToTarget + odom::globalPoint.angle); // - ?
 
-  while (std::abs(inertial->get_heading() - target) > 1) {
-    double error = target - inertial->get_heading();
-    double speed = error * 0.5;
-    if (speed > 100) {
-      speed = 100;
-    } else if (speed < -100) {
-      speed = -100;
-    }
-    chassis->getModel()->tank(speed, -speed);
+    // Calculates the x and y components of the vector
+    double relativeXToTarget = (cos(relativeAngleToTarget) * distanceToTarget);
+    double relativeYToTarget = (sin(relativeAngleToTarget) * distanceToTarget);
+
+    // Movement PID
+    derivative_x = relativeAngleToTarget - prevError_x;
+    prevError_x = relativeAngleToTarget;
+    derivative_y = relativeAngleToTarget - prevError_y;
+    prevError_y = relativeAngleToTarget;
+
+    double movementXPower = relativeXToTarget * kP + derivative_x * kD;
+    double movementYPower = relativeYToTarget * kP + derivative_x * kD;
+
+    // Calculates turn angle
+    double heading2 =
+        finalAngle < 0 ? finalAngle + M_PI * 2 : finalAngle - M_PI * 2;
+    finalAngle = (fabs(odom::globalPoint.angle) - finalAngle <
+                  fabs(odom::globalPoint.angle) - heading2)
+                     ? finalAngle
+                     : heading2;
+    printf("turn amount: %f\n", heading2);
+
+    // Turn PID
+    double turnError = -(
+        finalAngle - utils::compressAngle(startAngle, odom::globalPoint.angle));
+    // turn_e = turnError;
+    int turn_derivative = turnError - turn_prevError;
+    int turn_prevError = turnError;
+    double turnPower = turnError * turn_kP + turn_derivative * turn_kD;
+
+    printf("turn error: %f\n", turnError);
+
+    if (fabs(turnError) < utils::getRadians(2) &&
+        fabs(relativeXToTarget) < 0.5 && fabs(relativeYToTarget) < 0.5)
+      break;
+
+    printf("moving");
+    setRawVelocity(movementYPower + movementXPower - turnPower,
+                   movementYPower - movementXPower - turnPower,
+                   movementYPower - movementXPower + turnPower,
+                   movementYPower + movementXPower + turnPower);
+
+    // wait(10, msec);
     pros::delay(10);
   }
+
+  printf("exited pid");
+  setRawVelocity(0, 0, 0, 0);
 }
 
 } // namespace movement

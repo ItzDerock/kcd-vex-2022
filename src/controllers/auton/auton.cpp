@@ -16,19 +16,22 @@ GameSide game_side = RED;
 
 void run() {
   if (auton_type == NONE) {
+    printf("no auton");
     return;
   }
 
-  model->xArcade(-50, 0, 0);
-  pros::delay(500);
-  model->xArcade(0, 0, 0);
+  movement::moveTo(100, 100, 90);
 
-  if (game_side == BLUE) {
-    roller_motor->moveRelative(-150, 100);
-  } else {
-    roller_motor->moveRelative(150, 100);
-  }
-
+  // model->xArcade(-50, 0, 0);
+  // pros::delay(500);
+  // model->xArcade(0, 0, 0);
+  //
+  // if (game_side == BLUE) {
+  //   roller_motor->moveRelative(-150, 100);
+  // } else {
+  //   roller_motor->moveRelative(150, 100);
+  // }
+  //
   // move backwards slowly and spin roller
   // chassis->setMaxVelocity(SLOW);
   // chassis->moveDistanceAsync(-5_in);
@@ -51,7 +54,7 @@ void run() {
 
 void updateDisplay() {
   pros::lcd::set_text(
-      2, "Auton: " +
+      3, "Auton: " +
              std::string(auton_type == SIDE     ? "SIDE"
                          : auton_type == BACK   ? "BACK"
                          : auton_type == SKILLS ? "SKILLS"

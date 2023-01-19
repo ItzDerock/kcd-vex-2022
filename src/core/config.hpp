@@ -42,11 +42,11 @@
 /**
  * Odometry
  */
-#define ODOM_RIGHT_1 'A'
-#define ODOM_RIGHT_2 'B'
+#define ODOM_RIGHT_1 'C'
+#define ODOM_RIGHT_2 'D'
 
-#define ODOM_LEFT_1 'C'
-#define ODOM_LEFT_2 'D'
+#define ODOM_LEFT_1 'G'
+#define ODOM_LEFT_2 'H'
 
 #define ODOM_MIDDLE_1 'E'
 #define ODOM_MIDDLE_2 'F'
@@ -57,7 +57,7 @@
 #define BUTTON(x) if (master.get_digital_new_press(x))
 #define HELD(x) if (master.get_digital(x))
 
-extern std::shared_ptr<OdomChassisController> chassis;
+extern std::shared_ptr<ChassisController> chassis;
 extern std::shared_ptr<XDriveModel> model;
 extern std::shared_ptr<pros::IMU> inertial;
 extern std::shared_ptr<Motor> catapult_motor;
