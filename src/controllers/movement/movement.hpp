@@ -14,6 +14,11 @@ public:
   double angle;
 };
 
+/**
+ * Move to a location (absolute).
+ * Max velocity between 1 and 127.
+ */
+void moveTo(double x, double y, double finalAngle, double maxVelocity);
 void moveTo(double x, double y, double finalAngle);
 
 } // namespace movement

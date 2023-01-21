@@ -33,7 +33,7 @@ void setRawVelocity(double LF, double LB, double RF, double RB) {
   printf("LF: %f, LB: %f, RF: %f, RB: %f\n", LF, LB, RF, RB);
 }
 
-void moveTo(double x, double y, double finalAngle) {
+void moveTo__legacy(double x, double y, double finalAngle) {
   double startAngle = odom::globalPoint.angle;
 
   // some PID variables
@@ -101,6 +101,86 @@ void moveTo(double x, double y, double finalAngle) {
 
   printf("exited pid");
   setRawVelocity(0, 0, 0, 0);
+}
+
+auto toFieldCentered(double rightSpeed, double forwardSpeed) {
+  // get heading
+  double heading = inertial->get_heading();
+
+  // convert input to radians
+  heading *= (M_PI / 180);
+
+  // calculate the new rightSpeed and forwardSpeed
+  double temp = rightSpeed * cos(heading) - forwardSpeed * sin(heading);
+  forwardSpeed = rightSpeed * sin(heading) + forwardSpeed * cos(heading);
+  rightSpeed = temp;
+
+  return std::make_pair(rightSpeed, forwardSpeed);
+}
+
+void moveTo(double x, double y, double targetAngle, int maxVelocity) {
+  // Create three PID systems,
+  // one for each axis and one for the angle
+
+  PIDController xPID =
+      PIDController(0.5, 0.5, 0.3, -(maxVelocity), maxVelocity);
+  PIDController yPID =
+      PIDController(0.5, 0.5, 0.3, -(maxVelocity), maxVelocity);
+  PIDController anglePID =
+      PIDController(0.5, 0.5, 0.3, -maxVelocity, maxVelocity);
+
+  // track the time before the last run
+  double lastTime = pros::millis();
+
+  // debug csv header
+  printf("x, y, angle, reqX, reqY, reqAng, xPow, yPow, angPow\n");
+
+  // Run the loop
+  while (true) {
+    // Calculate dt
+    double dt = pros::millis() - lastTime;
+
+    // read sensor
+    double currHeading = inertial->get_heading();
+
+    // Calculate distance and angle to target
+    double requiredX = x - odom::globalPoint.x;
+    double requiredY = y - odom::globalPoint.y;
+    // double requiredAngle = wrap_degrees(currHeading - targetAngle);
+    double requiredAngle = fmin(std::fabs(targetAngle - currHeading),
+                                360 - std::fabs(targetAngle - currHeading));
+
+    // Calculate the PID values
+    double xPower = xPID.calculate(requiredX, dt);
+    double yPower = yPID.calculate(requiredY, dt);
+    double anglePower = anglePID.calculate(requiredAngle, dt);
+
+    // Break loop if we are close enough
+    if (fabs(requiredX) < 0.5 && fabs(requiredY) < 0.5 &&
+        fabs(requiredAngle) < 2)
+      break;
+
+    // log for debugging
+    printf("%f, %f, %f, %f, %f, %f, %f, %f, %f\n", odom::globalPoint.x,
+           odom::globalPoint.y, currHeading, requiredX, requiredY,
+           requiredAngle, xPower, yPower, anglePower);
+
+    // convert to field centered
+    std::pair<double, double> fieldCentered = toFieldCentered(xPower, yPower);
+
+    // Set the motor power
+    model->xArcade(fieldCentered.first, fieldCentered.second, anglePower);
+
+    pros::delay(10);
+  }
+
+  // Stop the motors
+  model->stop();
+}
+
+// overloads
+void moveTo(double x, double y, double targetAngle) {
+  moveTo(x, y, targetAngle, 127);
 }
 
 } // namespace movement

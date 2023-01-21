@@ -20,7 +20,7 @@ void run() {
     return;
   }
 
-  movement::moveTo(100, 100, 90);
+  movement::moveTo(100, 100, 0);
 
   // model->xArcade(-50, 0, 0);
   // pros::delay(500);

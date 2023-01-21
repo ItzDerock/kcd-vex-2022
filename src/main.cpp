@@ -256,8 +256,6 @@ void opcontrol() {
       pros::lcd::set_text(4, "Chassis Break: " + std::to_string(chassis_break));
     }
 
-    // BUTTON(pros::E_CONTROLLER_DIGITAL_R2) { movement::updatePositionLoop(); }
-
     // toggle intake
     BUTTON(pros::E_CONTROLLER_DIGITAL_R1) {
       if (intake_motor->getTargetVelocity() == 0 ||
