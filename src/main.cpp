@@ -10,6 +10,7 @@
 
 int DANGEROUS_OVERRIDE_LAST_PRESS = -1;
 bool endgame_launching = false;
+int l1_last_press = -1;
 
 enum DRIVE_MODE { FIELD_CENTERED, ROBOT_CENTERED };
 DRIVE_MODE drive_mode = FIELD_CENTERED;
@@ -194,9 +195,6 @@ void opcontrol() {
     // run catapult updater
     run_catapult();
 
-    // position updater
-    // movement::updatePosition();
-
     // get joystick values
     double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
     double iforwardSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -259,8 +257,8 @@ void opcontrol() {
     // toggle intake
     BUTTON(pros::E_CONTROLLER_DIGITAL_R1) {
       if (intake_motor->getTargetVelocity() == 0 ||
-          intake_motor->getTargetVelocity() == -200) {
-        intake_motor->moveVelocity(200);
+          intake_motor->getTargetVelocity() == -300) {
+        intake_motor->moveVelocity(300);
       } else {
         intake_motor->moveVelocity(0);
       }
@@ -269,8 +267,8 @@ void opcontrol() {
     // reverse intake
     BUTTON(pros::E_CONTROLLER_DIGITAL_R2) {
       if (intake_motor->getTargetVelocity() == 0 ||
-          intake_motor->getTargetVelocity() == 200) {
-        intake_motor->moveVelocity(-200);
+          intake_motor->getTargetVelocity() == 300) {
+        intake_motor->moveVelocity(-300);
       } else {
         intake_motor->moveVelocity(0);
       }
@@ -343,6 +341,38 @@ void opcontrol() {
       } else {
         // if pressed once, set last press to current time
         DANGEROUS_OVERRIDE_LAST_PRESS = pros::millis();
+
+        // rumble as a warning
+        master.rumble("-");
+      }
+    }
+
+    // set home location for moving
+    BUTTON(pros::E_CONTROLLER_DIGITAL_L1) {
+      // if double press, set the location
+      if (pros::millis() - l1_last_press < 200) {
+        // set home location
+        movement::goalLocation = odom::globalPoint;
+        pros::lcd::set_text(8, "Home Set");
+      } else {
+        // if single press, set last press to current time
+        l1_last_press = pros::millis();
+      }
+    }
+    else {
+      // if it is a single press, look at home location
+      if (l1_last_press != -1 && pros::millis() - l1_last_press > 200) {
+        l1_last_press = -1;
+
+        // calculate required angle
+        double angle =
+            std::atan2(movement::goalLocation.y - odom::globalPoint.y,
+                       movement::goalLocation.x - odom::globalPoint.x);
+
+        printf("turning to %f", angle);
+
+        // look at that angle
+        movement::turnTo(angle);
       }
     }
 

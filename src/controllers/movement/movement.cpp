@@ -8,10 +8,7 @@
 #include "pid.hpp"
 #include <cmath>
 
-double kP = 12;
-double kD = 7.5;
-double turn_kP = 175;
-double turn_kD = 100;
+double MINIMUM_ERROR = 0.05;
 
 double wrap_degrees(double angle) { return std::fmod(angle + 180, 360) - 180; }
 
@@ -33,75 +30,7 @@ void setRawVelocity(double LF, double LB, double RF, double RB) {
   printf("LF: %f, LB: %f, RF: %f, RB: %f\n", LF, LB, RF, RB);
 }
 
-void moveTo__legacy(double x, double y, double finalAngle) {
-  double startAngle = odom::globalPoint.angle;
-
-  // some PID variables
-  double derivative_x = 0.0;
-  double derivative_y = 0.0;
-  double prevError_x = 0.0;
-  double prevError_y = 0.0;
-  double turn_prevError = 0.0;
-
-  while (true) {
-    // Calculates distance and angle of the current point to the target point
-    double distanceToTarget =
-        hypot(x - odom::globalPoint.x, y - odom::globalPoint.y);
-    // dist = distanceToTarget; // for multitasking
-    double angleToTarget =
-        atan2(y - odom::globalPoint.y, x - odom::globalPoint.x);
-    double relativeAngleToTarget =
-        utils::angleWrap(angleToTarget + odom::globalPoint.angle); // - ?
-
-    // Calculates the x and y components of the vector
-    double relativeXToTarget = (cos(relativeAngleToTarget) * distanceToTarget);
-    double relativeYToTarget = (sin(relativeAngleToTarget) * distanceToTarget);
-
-    // Movement PID
-    derivative_x = relativeAngleToTarget - prevError_x;
-    prevError_x = relativeAngleToTarget;
-    derivative_y = relativeAngleToTarget - prevError_y;
-    prevError_y = relativeAngleToTarget;
-
-    double movementXPower = relativeXToTarget * kP + derivative_x * kD;
-    double movementYPower = relativeYToTarget * kP + derivative_x * kD;
-
-    // Calculates turn angle
-    double heading2 =
-        finalAngle < 0 ? finalAngle + M_PI * 2 : finalAngle - M_PI * 2;
-    finalAngle = (fabs(odom::globalPoint.angle) - finalAngle <
-                  fabs(odom::globalPoint.angle) - heading2)
-                     ? finalAngle
-                     : heading2;
-    printf("turn amount: %f\n", heading2);
-
-    // Turn PID
-    double turnError = -(
-        finalAngle - utils::compressAngle(startAngle, odom::globalPoint.angle));
-    // turn_e = turnError;
-    int turn_derivative = turnError - turn_prevError;
-    int turn_prevError = turnError;
-    double turnPower = turnError * turn_kP + turn_derivative * turn_kD;
-
-    printf("turn error: %f\n", turnError);
-
-    if (fabs(turnError) < utils::getRadians(2) &&
-        fabs(relativeXToTarget) < 0.5 && fabs(relativeYToTarget) < 0.5)
-      break;
-
-    printf("moving");
-    setRawVelocity(movementYPower + movementXPower - turnPower,
-                   movementYPower - movementXPower - turnPower,
-                   movementYPower - movementXPower + turnPower,
-                   movementYPower + movementXPower + turnPower);
-
-    // wait(10, msec);
-    pros::delay(10);
-  }
-
-  printf("exited pid");
-  setRawVelocity(0, 0, 0, 0);
-}
+Point goalLocation = Point(0, 0, 0);
 
 auto toFieldCentered(double rightSpeed, double forwardSpeed) {
   // get heading
@@ -118,16 +47,21 @@ auto toFieldCentered(double rightSpeed, double forwardSpeed) {
   return std::make_pair(rightSpeed, forwardSpeed);
 }
 
+PIDController xPID = PIDController(0.5, 0.5, 0.3, -127, 127);
+PIDController yPID = PIDController(0.5, 0.5, 0.3, -127, 127);
+PIDController anglePID = PIDController(0.5, 0.5, 0.3, -127, 127);
+
 void moveTo(double x, double y, double targetAngle, int maxVelocity) {
   // Create three PID systems,
   // one for each axis and one for the angle
+  xPID.setMinMaxOutput(-(maxVelocity), maxVelocity);
+  yPID.setMinMaxOutput(-(maxVelocity), maxVelocity);
+  anglePID.setMinMaxOutput(-(maxVelocity), maxVelocity);
 
-  PIDController xPID =
-      PIDController(0.5, 0.5, 0.3, -(maxVelocity), maxVelocity);
-  PIDController yPID =
-      PIDController(0.5, 0.5, 0.3, -(maxVelocity), maxVelocity);
-  PIDController anglePID =
-      PIDController(0.5, 0.5, 0.3, -maxVelocity, maxVelocity);
+  // reset the PID systems
+  xPID.reset();
+  yPID.reset();
+  anglePID.reset();
 
   // track the time before the last run
   double lastTime = pros::millis();
@@ -147,8 +81,11 @@ void moveTo(double x, double y, double targetAngle, int maxVelocity) {
     double requiredX = x - odom::globalPoint.x;
     double requiredY = y - odom::globalPoint.y;
     // double requiredAngle = wrap_degrees(currHeading - targetAngle);
-    double requiredAngle = fmin(std::fabs(targetAngle - currHeading),
-                                360 - std::fabs(targetAngle - currHeading));
+    // double requiredAngle = fmin(std::fabs(targetAngle - currHeading),
+    //                             360 - std::fabs(targetAngle - currHeading));
+    double requiredAngle =
+        180 - std::fabs(std::fmod(std::abs(targetAngle - currHeading), 360.0) -
+                        180.0);
 
     // Calculate the PID values
     double xPower = xPID.calculate(requiredX, dt);
@@ -156,7 +93,7 @@ void moveTo(double x, double y, double targetAngle, int maxVelocity) {
     double anglePower = anglePID.calculate(requiredAngle, dt);
 
     // Break loop if we are close enough
-    if (fabs(requiredX) < 0.5 && fabs(requiredY) < 0.5 &&
+    if (fabs(requiredX) < MINIMUM_ERROR && fabs(requiredY) < MINIMUM_ERROR &&
         fabs(requiredAngle) < 2)
       break;
 
@@ -167,6 +104,16 @@ void moveTo(double x, double y, double targetAngle, int maxVelocity) {
 
     // convert to field centered
     std::pair<double, double> fieldCentered = toFieldCentered(xPower, yPower);
+
+    // set to zero if error is too small
+    if (fabs(requiredX) < MINIMUM_ERROR)
+      fieldCentered.first = 0;
+
+    if (fabs(requiredY) < MINIMUM_ERROR)
+      fieldCentered.second = 0;
+
+    // if (fabs(requiredAngle) < 2)
+    anglePower = 0;
 
     // Set the motor power
     model->xArcade(fieldCentered.first, fieldCentered.second, anglePower);
@@ -181,6 +128,38 @@ void moveTo(double x, double y, double targetAngle, int maxVelocity) {
 // overloads
 void moveTo(double x, double y, double targetAngle) {
   moveTo(x, y, targetAngle, 127);
+}
+
+void moveTo(double x, double y) { moveTo(x, y, odom::globalPoint.angle, 127); }
+
+// turn to
+void turnTo(double angle) {
+  // Reset the PID system
+  anglePID.reset();
+
+  while (true) {
+    // Calculate dt
+    // double dt = pros::millis() - lastTime;
+
+    // read sensor
+    double currHeading = inertial->get_heading();
+
+    // Calculate distance and angle to target
+    double requiredAngle = fmin(std::fabs(angle - currHeading),
+                                360 - std::fabs(angle - currHeading));
+
+    // Calculate the PID values
+    double anglePower = anglePID.calculate(requiredAngle);
+
+    // Break loop if we are close enough
+    if (fabs(requiredAngle) < 2)
+      break;
+
+    // Set the motor power
+    model->xArcade(0, 0, anglePower);
+
+    pros::delay(10);
+  }
 }
 
 } // namespace movement

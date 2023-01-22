@@ -20,3 +20,15 @@ double PIDController::calculate(double error, double dt) {
 
   return output;
 }
+
+double PIDController::calculate(double error) { return calculate(error, 1); }
+
+void PIDController::reset() {
+  integral = 0;
+  previousError = 0;
+}
+
+void PIDController::setMinMaxOutput(double minOutput, double maxOutput) {
+  this->minOutput = minOutput;
+  this->maxOutput = maxOutput;
+}

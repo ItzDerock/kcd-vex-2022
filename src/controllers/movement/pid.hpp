@@ -5,6 +5,9 @@ public:
   PIDController(double kp, double ki, double kd, double minOutput,
                 double maxOutput);
   double calculate(double error, double dt);
+  double calculate(double error);
+  void setMinMaxOutput(double minOutput, double maxOutput);
+  void reset();
 
   // private:
   double kp;
