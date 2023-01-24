@@ -1,11 +1,10 @@
 #include "main.h"
-#include "controllers/movement/odom.hpp"
+#include "okapi/api/units/QLength.hpp"
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "util.hpp"
 
 #include "controllers/auton/auton.hpp"
-#include "controllers/movement/movement.hpp"
 #include "core/config.hpp"
 
 int DANGEROUS_OVERRIDE_LAST_PRESS = -1;
@@ -117,7 +116,7 @@ void initialize() {
 
   // start task to update position on screen
   // pros::Task updatePositionOnScreenTask(movement:: updatePositionLoop);
-  pros::Task odometry(odom::run);
+  // pros::Task odometry(odom::run);
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
@@ -153,7 +152,7 @@ void competition_initialize() {
 
   inertial->tare();
 
-  odom::reset();
+  // odom::reset();
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
@@ -194,6 +193,12 @@ void opcontrol() {
   while (true) {
     // run catapult updater
     run_catapult();
+
+    // update line 2 with x and y
+    pros::lcd::set_text(
+        2,
+        "X: " + std::to_string(auton_chassis->getPose().x.convert(inch)) +
+            " Y: " + std::to_string(auton_chassis->getPose().y.convert(inch)));
 
     // get joystick values
     double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
@@ -348,33 +353,33 @@ void opcontrol() {
     }
 
     // set home location for moving
-    BUTTON(pros::E_CONTROLLER_DIGITAL_L1) {
-      // if double press, set the location
-      if (pros::millis() - l1_last_press < 200) {
-        // set home location
-        movement::goalLocation = odom::globalPoint;
-        pros::lcd::set_text(8, "Home Set");
-      } else {
-        // if single press, set last press to current time
-        l1_last_press = pros::millis();
-      }
-    }
-    else {
-      // if it is a single press, look at home location
-      if (l1_last_press != -1 && pros::millis() - l1_last_press > 200) {
-        l1_last_press = -1;
-
-        // calculate required angle
-        double angle =
-            std::atan2(movement::goalLocation.y - odom::globalPoint.y,
-                       movement::goalLocation.x - odom::globalPoint.x);
-
-        printf("turning to %f", angle);
-
-        // look at that angle
-        movement::turnTo(angle);
-      }
-    }
+    // BUTTON(pros::E_CONTROLLER_DIGITAL_L1) {
+    //   // if double press, set the location
+    //   if (pros::millis() - l1_last_press < 200) {
+    //     // set home location
+    //     movement::goalLocation = odom::globalPoint;
+    //     pros::lcd::set_text(8, "Home Set");
+    //   } else {
+    //     // if single press, set last press to current time
+    //     l1_last_press = pros::millis();
+    //   }
+    // }
+    // else {
+    //   // if it is a single press, look at home location
+    //   if (l1_last_press != -1 && pros::millis() - l1_last_press > 200) {
+    //     l1_last_press = -1;
+    //
+    //     // calculate required angle
+    //     double angle =
+    //         std::atan2(movement::goalLocation.y - odom::globalPoint.y,
+    //                    movement::goalLocation.x - odom::globalPoint.x);
+    //
+    //     printf("turning to %f", angle);
+    //
+    //     // look at that angle
+    //     movement::turnTo(angle);
+    //   }
+    // }
 
     if (catapult_state == DISABLED) {
       // up/down manual override
@@ -400,11 +405,6 @@ void opcontrol() {
     pros::lcd::set_text(
         6, "Potentiometer: " + std::to_string(catapult_pot->get_value()) +
                " Catapult: " + std::to_string(catapult_state));
-
-    // print actual flywheel speed on 4th line of LCD
-    // pros::lcd::set_text(
-    //     4, "Flywheel: " + std::to_string(flywheel->getActualVelocity()) +
-    //            " rpm (" + std::to_string(flywheel->getTemperature()) + "C)");
 
     // delay
     pros::delay(10);

@@ -1,5 +1,6 @@
 #include "config.hpp"
 #include "main.h"
+#include "okapi/api/util/mathUtil.hpp"
 #include <memory>
 
 #ifndef CONFIG_CPP
@@ -12,21 +13,37 @@ std::shared_ptr<pros::IMU> inertial =
     std::make_shared<pros::IMU>(INERTIAL_PORT);
 
 /**
+ * Define tracking wheels
+ */
+std::shared_ptr<ADIEncoder> leftEnc =
+    std::make_shared<ADIEncoder>(ODOM_LEFT_1, ODOM_LEFT_2);
+std::shared_ptr<ADIEncoder> rightEnc =
+    std::make_shared<ADIEncoder>(ODOM_RIGHT_1, ODOM_RIGHT_2);
+std::shared_ptr<ADIEncoder> middleEnc =
+    std::make_shared<ADIEncoder>(ODOM_MIDDLE_1, ODOM_MIDDLE_2);
+
+/**
  * define chassis and model
  */
-std::shared_ptr<ChassisController> chassis =
+std::shared_ptr<OdomChassisController> chassis =
     ChassisControllerBuilder()
         .withMotors(DRIVE_TOP_LEFT, -DRIVE_TOP_RIGHT, -DRIVE_BOTTOM_RIGHT,
                     DRIVE_BOTTOM_LEFT)
         .withDimensions(AbstractMotor::gearset::green,
                         {{4_in, 12_in}, imev5GreenTPR})
         .withGains({0.001, 0, 0.0001}, {0.001, 0, 0.0001}, {0.001, 0, 0.0001})
-        // .withOdometry(StateMode::FRAME_TRANSFORMATION)
-        // .buildOdometry();
-        .build();
+        .withSensors(leftEnc, rightEnc, middleEnc)
+        // wheel diam, track width, middle distance, middle diam
+        .withOdometry({{2.75_in, 7_in, 7.5_in, 2.75_in}, quadEncoderTPR})
+        .buildOdometry();
 
 std::shared_ptr<XDriveModel> model =
     std::static_pointer_cast<XDriveModel>(chassis->getModel());
+
+std::shared_ptr<AsyncHolonomicChassisController> auton_chassis =
+    AsyncHolonomicChassisControllerBuilder(chassis)
+        // .withDistGains()
+        .build();
 
 /**
  * define catapult motor and potentiometer
@@ -57,16 +74,6 @@ std::shared_ptr<Motor> roller_motor = std::make_shared<okapi::Motor>(
  */
 std::shared_ptr<pros::ADIDigitalOut> endgame_launcher =
     std::make_shared<pros::ADIDigitalOut>(END_GAME_PNEUMATIC);
-
-/**
- * Define tracking wheels
- */
-std::shared_ptr<ADIEncoder> left =
-    std::make_shared<ADIEncoder>(ODOM_LEFT_1, ODOM_LEFT_2);
-std::shared_ptr<ADIEncoder> right =
-    std::make_shared<ADIEncoder>(ODOM_RIGHT_1, ODOM_RIGHT_2);
-std::shared_ptr<ADIEncoder> middle =
-    std::make_shared<ADIEncoder>(ODOM_MIDDLE_1, ODOM_MIDDLE_2);
 
 /**
  * states

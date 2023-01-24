@@ -1,6 +1,5 @@
 #include "auton.hpp"
 #include "../../core/config.hpp"
-#include "../movement/movement.hpp"
 #include "main.h"
 #include "pros/llemu.hpp"
 
@@ -20,36 +19,9 @@ void run() {
     return;
   }
 
-  movement::moveTo(25, 36, 0);
+  auton_chassis->setTarget({10_in, 0_in, 0_deg}, true);
 
-  // model->xArcade(-50, 0, 0);
-  // pros::delay(500);
-  // model->xArcade(0, 0, 0);
-  //
-  // if (game_side == BLUE) {
-  //   roller_motor->moveRelative(-150, 100);
-  // } else {
-  //   roller_motor->moveRelative(150, 100);
-  // }
-  //
-  // move backwards slowly and spin roller
-  // chassis->setMaxVelocity(SLOW);
-  // chassis->moveDistanceAsync(-5_in);
-
-  // chassis->stop();
-  // chassis->setMaxVelocity(600);
-
-  // chassis->moveDistance(120_in);
-  // x-drive move at 45 deg angle for 120 inches
-  // chassis->driveToPoint({120_in, 120_in});
-  // movement::turnAngle(90);
-
-  // chassis->setMaxVelocity(SLOW);
-  // chassis->moveDistanceAsync(-5_in);
-  // roller_motor->moveRelative(10, 100);
-  // chassis->setMaxVelocity(600);
-
-  // movement::moveDistance(47_in, 100);
+  // movement::moveTo(25, 36, 0);
 }
 
 void updateDisplay() {

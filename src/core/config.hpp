@@ -57,7 +57,8 @@
 #define BUTTON(x) if (master.get_digital_new_press(x))
 #define HELD(x) if (master.get_digital(x))
 
-extern std::shared_ptr<ChassisController> chassis;
+extern std::shared_ptr<OdomChassisController> chassis;
+extern std::shared_ptr<AsyncHolonomicChassisController> auton_chassis;
 extern std::shared_ptr<XDriveModel> model;
 extern std::shared_ptr<pros::IMU> inertial;
 extern std::shared_ptr<Motor> catapult_motor;
@@ -65,9 +66,9 @@ extern std::shared_ptr<pros::ADIAnalogIn> catapult_pot;
 extern std::shared_ptr<Motor> intake_motor;
 extern std::shared_ptr<Motor> roller_motor;
 extern std::shared_ptr<pros::ADIDigitalOut> endgame_launcher;
-extern std::shared_ptr<ADIEncoder> left;
-extern std::shared_ptr<ADIEncoder> right;
-extern std::shared_ptr<ADIEncoder> middle;
+extern std::shared_ptr<ADIEncoder> leftEnc;
+extern std::shared_ptr<ADIEncoder> rightEnc;
+extern std::shared_ptr<ADIEncoder> middleEnc;
 
 extern bool chassis_break;
 extern bool auto_reload;

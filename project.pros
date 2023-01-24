@@ -4,6 +4,29 @@
         "project_name": "Vex Robotics",
         "target": "v5",
         "templates": {
+            "HolonomicLib": {
+                "location": "/home/derock/.config/pros/templates/HolonomicLib@1.0.2",
+                "metadata": {
+                    "origin": "local"
+                },
+                "name": "HolonomicLib",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": "^3.6.2",
+                "system_files": [
+                    "include\\HolonomicLib\\API.hpp",
+                    "include\\HolonomicLib\\Pathing\\Pose2D.hpp",
+                    "include\\HolonomicLib\\Utility\\Units.hpp",
+                    "include\\HolonomicLib\\Utility\\Math.hpp",
+                    "include\\HolonomicLib\\Utility\\StateMachine.hpp",
+                    "include\\HolonomicLib\\Chassis\\Controller\\AsyncHolonomicChassisController.hpp",
+                    "firmware\\HolonomicLib.a",
+                    "include\\HolonomicLib\\Pathing\\Trajectory.hpp",
+                    "include\\HolonomicLib\\Utility\\TaskWrapper.hpp"
+                ],
+                "target": "v5",
+                "user_files": [],
+                "version": "1.0.2"
+            },
             "kernel": {
                 "location": "/home/derock/.config/pros/templates/kernel@3.7.3",
                 "metadata": {
