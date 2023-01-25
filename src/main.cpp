@@ -15,7 +15,7 @@ int l1_last_press = -1;
 enum DRIVE_MODE { FIELD_CENTERED, ROBOT_CENTERED };
 DRIVE_MODE drive_mode = FIELD_CENTERED;
 
-#define CATAPULT_POT_LOADING 2723
+#define CATAPULT_POT_LOADING 2800
 #define CATAPULT_POT_LAUNCHED 1100
 
 void endgame() {
