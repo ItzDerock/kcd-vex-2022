@@ -2,20 +2,12 @@
 
 class PIDController {
 public:
-  PIDController(double kp, double ki, double kd, double minOutput,
-                double maxOutput);
-  double calculate(double error, double dt);
-  double calculate(double error);
-  void setMinMaxOutput(double minOutput, double maxOutput);
+  PIDController(double kP, double kI, double kD);
+  double update(double error);
   void reset();
 
-  // private:
-  double kp;
-  double ki;
-  double kd;
-  double minOutput;
-  double maxOutput;
-
-  double integral = 0;
-  double previousError = 0;
+private:
+  double _kP, _kI, _kD;
+  double _previousError = 0;
+  double _integral = 0;
 };

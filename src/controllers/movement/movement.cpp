@@ -1,4 +1,4 @@
-#pragma once
+// #pragma once
 
 #include "movement.hpp"
 #include "../../core/config.hpp"
@@ -47,17 +47,11 @@ auto toFieldCentered(double rightSpeed, double forwardSpeed) {
   return std::make_pair(rightSpeed, forwardSpeed);
 }
 
-PIDController xPID = PIDController(0.5, 0.5, 0.3, -127, 127);
-PIDController yPID = PIDController(0.5, 0.5, 0.3, -127, 127);
-PIDController anglePID = PIDController(0.5, 0.5, 0.3, -127, 127);
+PIDController xPID = PIDController(0.1, 0.0001, 0.001);
+PIDController yPID = PIDController(0.1, 0.0001, 0.001);
+PIDController anglePID = PIDController(0.1, 0.0001, 0.001);
 
 void moveTo(double x, double y, double targetAngle, int maxVelocity) {
-  // Create three PID systems,
-  // one for each axis and one for the angle
-  xPID.setMinMaxOutput(-(maxVelocity), maxVelocity);
-  yPID.setMinMaxOutput(-(maxVelocity), maxVelocity);
-  anglePID.setMinMaxOutput(-(maxVelocity), maxVelocity);
-
   // reset the PID systems
   xPID.reset();
   yPID.reset();
@@ -88,9 +82,9 @@ void moveTo(double x, double y, double targetAngle, int maxVelocity) {
                         180.0);
 
     // Calculate the PID values
-    double xPower = xPID.calculate(requiredX, dt);
-    double yPower = yPID.calculate(requiredY, dt);
-    double anglePower = anglePID.calculate(requiredAngle, dt);
+    double xPower = xPID.update(requiredX);
+    double yPower = yPID.update(requiredY);
+    double anglePower = anglePID.update(requiredAngle);
 
     // Break loop if we are close enough
     if (fabs(requiredX) < MINIMUM_ERROR && fabs(requiredY) < MINIMUM_ERROR &&
@@ -116,7 +110,10 @@ void moveTo(double x, double y, double targetAngle, int maxVelocity) {
     anglePower = 0;
 
     // Set the motor power
-    model->xArcade(fieldCentered.first, fieldCentered.second, anglePower);
+    model->xArcade(
+        utils::constrain(fieldCentered.first, -maxVelocity, maxVelocity),
+        utils::constrain(fieldCentered.second, -maxVelocity, maxVelocity),
+        utils::constrain(anglePower, -maxVelocity, maxVelocity));
 
     pros::delay(10);
   }
@@ -149,7 +146,7 @@ void turnTo(double angle) {
                                 360 - std::fabs(angle - currHeading));
 
     // Calculate the PID values
-    double anglePower = anglePID.calculate(requiredAngle);
+    double anglePower = anglePID.update(requiredAngle);
 
     // Break loop if we are close enough
     if (fabs(requiredAngle) < 2)

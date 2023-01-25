@@ -1,34 +1,17 @@
-#pragma once
 #include "pid.hpp"
-#include "okapi/api.hpp"
 
-PIDController::PIDController(double kp, double ki, double kd, double minOutput,
-                             double maxOutput)
-    : kp(kp), ki(ki), kd(kd), minOutput(minOutput), maxOutput(maxOutput) {}
+PIDController::PIDController(double kP, double kI, double kD)
+    : _kP(kP), _kI(kI), _kD(kD) {}
 
-double PIDController::calculate(double error, double dt) {
-  integral += error * dt;
-  double derivative = (error - previousError) / dt;
-  double output = kp * error + ki * integral + kd * derivative;
-  previousError = error;
-
-  if (output > maxOutput) {
-    output = maxOutput;
-  } else if (output < minOutput) {
-    output = minOutput;
-  }
-
+double PIDController::update(double error) {
+  _integral += error;
+  double derivative = error - _previousError;
+  double output = _kP * error + _kI * _integral + _kD * derivative;
+  _previousError = error;
   return output;
 }
 
-double PIDController::calculate(double error) { return calculate(error, 1); }
-
 void PIDController::reset() {
-  integral = 0;
-  previousError = 0;
-}
-
-void PIDController::setMinMaxOutput(double minOutput, double maxOutput) {
-  this->minOutput = minOutput;
-  this->maxOutput = maxOutput;
+  _previousError = 0;
+  _integral = 0;
 }
