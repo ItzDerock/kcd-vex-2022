@@ -57,9 +57,6 @@ void moveTo(double x, double y, double targetAngle, double maxVelocity) {
   yPID.reset();
   anglePID.reset();
 
-  // start angle
-  // double startAngle = inertial->get_heading();
-
   // track the time before the last run
   double lastTime = pros::millis();
 
@@ -77,17 +74,6 @@ void moveTo(double x, double y, double targetAngle, double maxVelocity) {
     // Calculate distance and angle to target
     double requiredX = x - odom::globalPoint.x;
     double requiredY = y - odom::globalPoint.y;
-    // double requiredAngle = wrap_degrees(targetAngle - currHeading);
-    // double requiredAngle = wrap_degrees(currHeading - targetAngle);
-    // double requiredAngle = fmin(std::fabs(targetAngle - currHeading),
-    //                             360 - std::fabs(targetAngle - currHeading));
-    // double requiredAngle =
-    //     180 - std::fabs(std::fmod(std::abs(targetAngle - currHeading), 360.0)
-    //     -
-    //                     180.0);
-    // double requiredAngle =
-    //     -(targetAngle - utils::compressAngle(startAngle, currHeading));
-
     double requiredAngle = targetAngle - currHeading;
 
     // wrap
@@ -95,6 +81,10 @@ void moveTo(double x, double y, double targetAngle, double maxVelocity) {
       requiredAngle = -1 * (360 + requiredAngle);
     else if (requiredAngle < -180)
       requiredAngle = 360 + requiredAngle;
+
+    // if targetAngle is -1, don't turn
+    if (targetAngle == -1)
+      requiredAngle = 0;
 
     // Calculate the PID values
     double xPower = xPID.update(requiredX);
@@ -153,7 +143,7 @@ void moveTo(double x, double y, double targetAngle, double maxVelocity,
 }
 
 // turn to
-void turnTo(double angle) {
+void turnTo(double targetAngle) {
   // Reset the PID system
   anglePID.reset();
 
@@ -164,8 +154,13 @@ void turnTo(double angle) {
     double currHeading = inertial->get_heading();
 
     // Calculate distance and angle to target
-    double requiredAngle = fmin(std::fabs(angle - currHeading),
-                                360 - std::fabs(angle - currHeading));
+    double requiredAngle = targetAngle - currHeading;
+
+    // wrap
+    if (requiredAngle > 180)
+      requiredAngle = -1 * (360 + requiredAngle);
+    else if (requiredAngle < -180)
+      requiredAngle = 360 + requiredAngle;
 
     // Calculate the PID values
     double anglePower = anglePID.update(requiredAngle);

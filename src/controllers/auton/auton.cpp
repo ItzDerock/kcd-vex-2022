@@ -23,14 +23,15 @@ void run() {
   switch (auton_type) {
   case SIDE:
     if (game_side == RED)
-      auton::run_red_side();
+      run_red_side();
     else
       auton::run_blue_side();
     break;
 
   case BACK:
+  case BACK_SHORT:
     if (game_side == RED)
-      auton::run_red_back();
+      auton::run_red_back(auton_type == BACK_SHORT);
     else
       auton::run_blue_back();
     break;

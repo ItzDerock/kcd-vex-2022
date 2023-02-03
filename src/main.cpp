@@ -106,7 +106,7 @@ void catapult_stuckcheck() {
 void catapult_task() {
   while (true) {
     run_catapult();
-    catapult_stuckcheck();
+    // catapult_stuckcheck();
 
     if (catapult_state == DISABLED)
       break;

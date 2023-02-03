@@ -8,7 +8,7 @@
 
 namespace auton {
 
-void run_red_back() {
+void run_red_back(bool quickMode) {
   // movement::moveTo(0, -24, 0);
 
   // while (odom::globalPoint.y > -20) {
@@ -29,18 +29,21 @@ void run_red_back() {
   // done with first roller
   pros::delay(500);
 
-  movement::moveTo(0, 0, 0);
+  if (!quickMode) {
 
-  // center area
-  movement::moveTo(36, 25, 90, 127, 5);
+    movement::moveTo(0, 0, 0);
 
-  movement::moveTo(92, 65, 90);
-  pros::delay(50);
-  model->xArcade(-20, 0, 0);
-  pros::delay(1000);
-  roller_motor->moveRelative(130, 50);
-  pros::delay(100);
-  model->xArcade(0, 0, 0);
+    // center area
+    movement::moveTo(36, 25, 90, 127, 5);
+
+    movement::moveTo(92, 65, 90);
+    pros::delay(50);
+    model->xArcade(-20, 0, 0);
+    pros::delay(1000);
+    roller_motor->moveRelative(130, 50);
+    pros::delay(100);
+    model->xArcade(0, 0, 0);
+  }
 
   // tare
   inertial->tare_heading();
