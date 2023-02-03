@@ -20,7 +20,30 @@ void run() {
     return;
   }
 
-  movement::moveTo(0, 25, 0);
+  switch (auton_type) {
+  case SIDE:
+    if (game_side == RED)
+      auton::run_red_side();
+    else
+      auton::run_blue_side();
+    break;
+
+  case BACK:
+    if (game_side == RED)
+      auton::run_red_back();
+    else
+      auton::run_blue_back();
+    break;
+
+  case SKILLS:
+    auton::run_skills();
+    break;
+
+  case NONE:
+    break;
+  }
+
+  // movement::moveTo(0, 25, 0);
 
   // model->xArcade(-50, 0, 0);
   // pros::delay(500);

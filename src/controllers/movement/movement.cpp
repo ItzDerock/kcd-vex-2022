@@ -8,7 +8,7 @@
 #include "pid.hpp"
 #include <cmath>
 
-double MINIMUM_ERROR = 0.05;
+double MINIMUM_ERROR = 2;
 
 double wrap_degrees(double angle) { return std::fmod(angle + 180, 360) - 180; }
 
@@ -47,15 +47,18 @@ auto toFieldCentered(double rightSpeed, double forwardSpeed) {
   return std::make_pair(rightSpeed, forwardSpeed);
 }
 
-PIDController xPID = PIDController(0.1, 0.0001, 0.001);
-PIDController yPID = PIDController(0.1, 0.0001, 0.001);
-PIDController anglePID = PIDController(0.1, 0.0001, 0.001);
+PIDController xPID = PIDController(0.2, 0.00005, 0.002);
+PIDController yPID = PIDController(0.2, 0.00005, 0.002);
+PIDController anglePID = PIDController(0.02, 0.0001, 0.001);
 
-void moveTo(double x, double y, double targetAngle, int maxVelocity) {
+void moveTo(double x, double y, double targetAngle, double maxVelocity) {
   // reset the PID systems
   xPID.reset();
   yPID.reset();
   anglePID.reset();
+
+  // start angle
+  // double startAngle = inertial->get_heading();
 
   // track the time before the last run
   double lastTime = pros::millis();
@@ -74,12 +77,24 @@ void moveTo(double x, double y, double targetAngle, int maxVelocity) {
     // Calculate distance and angle to target
     double requiredX = x - odom::globalPoint.x;
     double requiredY = y - odom::globalPoint.y;
+    // double requiredAngle = wrap_degrees(targetAngle - currHeading);
     // double requiredAngle = wrap_degrees(currHeading - targetAngle);
     // double requiredAngle = fmin(std::fabs(targetAngle - currHeading),
     //                             360 - std::fabs(targetAngle - currHeading));
-    double requiredAngle =
-        180 - std::fabs(std::fmod(std::abs(targetAngle - currHeading), 360.0) -
-                        180.0);
+    // double requiredAngle =
+    //     180 - std::fabs(std::fmod(std::abs(targetAngle - currHeading), 360.0)
+    //     -
+    //                     180.0);
+    // double requiredAngle =
+    //     -(targetAngle - utils::compressAngle(startAngle, currHeading));
+
+    double requiredAngle = targetAngle - currHeading;
+
+    // wrap
+    if (requiredAngle > 180)
+      requiredAngle = -1 * (360 + requiredAngle);
+    else if (requiredAngle < -180)
+      requiredAngle = 360 + requiredAngle;
 
     // Calculate the PID values
     double xPower = xPID.update(requiredX);
@@ -100,14 +115,14 @@ void moveTo(double x, double y, double targetAngle, int maxVelocity) {
     std::pair<double, double> fieldCentered = toFieldCentered(xPower, yPower);
 
     // set to zero if error is too small
-    if (fabs(requiredX) < MINIMUM_ERROR)
-      fieldCentered.first = 0;
+    // if (fabs(requiredX) < MINIMUM_ERROR)
+    // fieldCentered.first = 0;
 
-    if (fabs(requiredY) < MINIMUM_ERROR)
-      fieldCentered.second = 0;
+    // if (fabs(requiredY) < MINIMUM_ERROR)
+    // fieldCentered.second = 0;
 
     // if (fabs(requiredAngle) < 2)
-    anglePower = 0;
+    // anglePower = 0;
 
     // Set the motor power
     model->xArcade(
@@ -129,6 +144,14 @@ void moveTo(double x, double y, double targetAngle) {
 
 void moveTo(double x, double y) { moveTo(x, y, odom::globalPoint.angle, 127); }
 
+void moveTo(double x, double y, double targetAngle, double maxVelocity,
+            double maxError) {
+  double oldError = MINIMUM_ERROR;
+  MINIMUM_ERROR = maxError;
+  moveTo(x, y, targetAngle, maxVelocity);
+  MINIMUM_ERROR = oldError;
+}
+
 // turn to
 void turnTo(double angle) {
   // Reset the PID system
@@ -136,7 +159,6 @@ void turnTo(double angle) {
 
   while (true) {
     // Calculate dt
-    // double dt = pros::millis() - lastTime;
 
     // read sensor
     double currHeading = inertial->get_heading();

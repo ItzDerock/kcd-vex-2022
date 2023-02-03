@@ -71,7 +71,50 @@ void run_catapult() {
         catapult_motor->moveVelocity(0);
         catapult_state = IDLE;
       }
+
+      // stuck check
+      // if (catapult_motor->getVelocityError() > )
+      // printf("%f", catapult_motor->getVelocityError());
+      // if (catapult_motor->getVelocityError() > 100) {
+      //   catapult_motor->moveVelocity(0);
+      //   catapult_state = IDLE;
+      // }
     }
+}
+
+int last_stuck = 0;
+int stucktime = 0;
+
+void catapult_stuckcheck() {
+  if (catapult_motor->getVelocityError() >= 99) {
+    if (pros::millis() - last_stuck > 1000) {
+      last_stuck = 0;
+      stucktime = 0;
+    }
+
+    last_stuck = pros::millis();
+    stucktime++;
+
+    // if stuck for 2 seconds, turn off catapult
+    if (stucktime > 10) {
+      catapult_motor->moveVelocity(0);
+      catapult_state = DISABLED;
+    }
+  }
+}
+
+void catapult_task() {
+  while (true) {
+    run_catapult();
+    catapult_stuckcheck();
+
+    if (catapult_state == DISABLED)
+      break;
+
+    pros::delay(20);
+  }
+
+  printf("Warning: cata task ended");
 }
 
 /**
@@ -118,6 +161,7 @@ void initialize() {
   // start task to update position on screen
   // pros::Task updatePositionOnScreenTask(movement:: updatePositionLoop);
   pros::Task odometry(odom::run);
+  pros::Task catapult(catapult_task);
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
@@ -191,9 +235,13 @@ void autonomous() {
 void opcontrol() {
   pros::Controller master(pros::E_CONTROLLER_MASTER);
 
+  // int lastRun = pros::millis();
+
   while (true) {
     // run catapult updater
-    run_catapult();
+    // run_catapult();
+    // printf("%d\n", pros::millis() - lastRun);
+    // lastRun = pros::millis();
 
     // get joystick values
     double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
@@ -331,6 +379,8 @@ void opcontrol() {
 
     // disable catapult
     BUTTON(pros::E_CONTROLLER_DIGITAL_RIGHT) {
+      printf("DANGEROUS BUTTON PRESSED: %d",
+             pros::millis() - DANGEROUS_OVERRIDE_LAST_PRESS);
       if (pros::millis() - DANGEROUS_OVERRIDE_LAST_PRESS < 1000) {
         // if pressed twice within 1 second, disable catapult
         catapult_state = DISABLED;

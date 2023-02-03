@@ -6,8 +6,8 @@
 
 namespace auton {
 
-inline void run_blue_side() {}
-inline void run_blue_back() {}
+void run_blue_side() {}
+void run_blue_back() {}
 
 } // namespace auton
 
