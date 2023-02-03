@@ -30,6 +30,7 @@ inline double inchToDeg(double inch) { return (inch / (M_PI * 2.75)) * 360; }
 
 // conversions (angles)
 inline double getRadians(double deg) { return (deg * M_PI) / 180; }
+inline double getDegrees(double rad) { return (rad * 180) / M_PI; }
 inline double angleWrap(double angle) {
   while (angle < -M_PI) {
     angle += 2 * M_PI;

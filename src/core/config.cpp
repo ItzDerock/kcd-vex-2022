@@ -71,7 +71,7 @@ std::shared_ptr<ADIEncoder> middle =
 /**
  * states
  */
-bool chassis_break = false;
+// bool chassis_break = false;
 bool auto_reload = true;
 
 /**

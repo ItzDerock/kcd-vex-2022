@@ -9,15 +9,7 @@
 namespace auton {
 
 void run_red_back(bool quickMode) {
-  // movement::moveTo(0, -24, 0);
-
-  // while (odom::globalPoint.y > -20) {
-  //   model->xArcade(0, -20, 0);
-  //   pros::delay(10);
-  // }
-  // model->xArcade(0, 0, 0);
-  model->setBrakeMode(AbstractMotor::brakeMode::hold);
-
+  movement::setChassisBreak(true);
   movement::moveTo(0, -24, 0);
 
   pros::delay(500);
@@ -30,20 +22,28 @@ void run_red_back(bool quickMode) {
   pros::delay(500);
 
   if (!quickMode) {
-
-    movement::moveTo(0, 0, 0);
+    movement::moveTo(0, 0, -20);
 
     // center area
-    movement::moveTo(36, 25, 90, 127, 5);
+    movement::setAngleTolerance(10);
+    movement::moveTo(45, 27, -20, 127, 5);
+    pros::delay(100);
+    movement::moveTo(52, 64, 0, 127, 5);
+    movement::setAngleTolerance(2);
 
-    movement::moveTo(92, 65, 90);
-    pros::delay(50);
+    movement::moveTo(90, 64, 90, 127, 1.25);
+    pros::delay(200);
     model->xArcade(-20, 0, 0);
     pros::delay(1000);
     roller_motor->moveRelative(130, 50);
     pros::delay(100);
     model->xArcade(0, 0, 0);
+  } else {
+    movement::turnTo(90);
   }
+
+  pros::delay(500);
+  movement::setChassisBreak(false);
 
   // tare
   inertial->tare_heading();

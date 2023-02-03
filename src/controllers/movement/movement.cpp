@@ -9,6 +9,7 @@
 #include <cmath>
 
 double MINIMUM_ERROR = 2;
+double ANGLE_ERROR_TOLERANCE = 2;
 
 double wrap_degrees(double angle) { return std::fmod(angle + 180, 360) - 180; }
 
@@ -47,9 +48,13 @@ auto toFieldCentered(double rightSpeed, double forwardSpeed) {
   return std::make_pair(rightSpeed, forwardSpeed);
 }
 
-PIDController xPID = PIDController(0.2, 0.00005, 0.002);
-PIDController yPID = PIDController(0.2, 0.00005, 0.002);
+// PIDController xPID = PIDController(0.2, 0.00005, 0.002);
+// PIDController yPID = PIDController(0.2, 0.00005, 0.002);
+PIDController xPID(0.5, 0.00005, 0.001);
+PIDController yPID(0.5, 0.00005, 0.001);
 PIDController anglePID = PIDController(0.02, 0.0001, 0.001);
+
+void setAngleTolerance(double tolerance) { ANGLE_ERROR_TOLERANCE = tolerance; }
 
 void moveTo(double x, double y, double targetAngle, double maxVelocity) {
   // reset the PID systems
@@ -93,7 +98,7 @@ void moveTo(double x, double y, double targetAngle, double maxVelocity) {
 
     // Break loop if we are close enough
     if (fabs(requiredX) < MINIMUM_ERROR && fabs(requiredY) < MINIMUM_ERROR &&
-        fabs(requiredAngle) < 2)
+        fabs(requiredAngle) < ANGLE_ERROR_TOLERANCE)
       break;
 
     // log for debugging
@@ -174,6 +179,30 @@ void turnTo(double targetAngle) {
 
     pros::delay(10);
   }
+
+  model->stop();
 }
+
+bool chassis_break = false;
+void setChassisBreak(bool value) {
+  chassis_break = value;
+  model->setBrakeMode(chassis_break ? AbstractMotor::brakeMode::hold
+                                    : AbstractMotor::brakeMode::coast);
+
+  // doesn't work, set brake mode for each motor individually
+  auto blMotor = model->getBottomLeftMotor();
+  auto brMotor = model->getBottomRightMotor();
+  auto tlMotor = model->getTopLeftMotor();
+  auto trMotor = model->getTopRightMotor();
+
+  for (auto motor : {blMotor, brMotor, tlMotor, trMotor}) {
+    motor->setBrakeMode(chassis_break ? AbstractMotor::brakeMode::hold
+                                      : AbstractMotor::brakeMode::coast);
+  }
+
+  pros::lcd::set_text(4, "Chassis Break: " + std::to_string(chassis_break));
+}
+
+void toggleChassisBreak() { setChassisBreak(!chassis_break); }
 
 } // namespace movement

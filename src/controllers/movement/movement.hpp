@@ -26,10 +26,16 @@ void moveTo(double x, double y, double finalAngle, double maxVelocity);
 void moveTo(double x, double y, double finalAngle);
 void moveTo(double x, double y);
 
+void setAngleTolerance(double tolerance);
+
 /**
  * Turn to an angle (absolute).
  */
 void turnTo(double angle);
+
+extern bool chassis_break;
+void setChassisBreak(bool brake);
+void toggleChassisBreak();
 
 } // namespace movement
 #endif // MOVEMENT_HPP

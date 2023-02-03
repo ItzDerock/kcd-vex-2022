@@ -44,6 +44,7 @@ void endgame() {
 }
 
 void run_catapult() {
+  // printf("%d", catapult_state);
   if (catapult_state == IDLE && auto_reload) {
     catapult_state = REELING;
   }
@@ -71,14 +72,6 @@ void run_catapult() {
         catapult_motor->moveVelocity(0);
         catapult_state = IDLE;
       }
-
-      // stuck check
-      // if (catapult_motor->getVelocityError() > )
-      // printf("%f", catapult_motor->getVelocityError());
-      // if (catapult_motor->getVelocityError() > 100) {
-      //   catapult_motor->moveVelocity(0);
-      //   catapult_state = IDLE;
-      // }
     }
 }
 
@@ -108,14 +101,16 @@ void catapult_task() {
     run_catapult();
     // catapult_stuckcheck();
 
-    if (catapult_state == DISABLED)
-      break;
+    // if (catapult_state == DISABLED)
+    //   break;
 
     pros::delay(20);
   }
 
   printf("Warning: cata task ended");
 }
+
+// pros::Task catapult(catapult_task);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -161,7 +156,6 @@ void initialize() {
   // start task to update position on screen
   // pros::Task updatePositionOnScreenTask(movement:: updatePositionLoop);
   pros::Task odometry(odom::run);
-  pros::Task catapult(catapult_task);
 
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
@@ -235,11 +229,16 @@ void autonomous() {
 void opcontrol() {
   pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-  // int lastRun = pros::millis();
+  // revive catapult task
+  // printf("Catapult state is %d", catapult.get_state());
+  // if (catapult.get_state() == pros::E_TASK_STATE_DELETED) {
+  //   catapult = pros::Task(catapult_task);
+  // }
 
   while (true) {
+    // printf("Catapult state is %d", catapult.get_state());
     // run catapult updater
-    // run_catapult();
+    run_catapult();
     // printf("%d\n", pros::millis() - lastRun);
     // lastRun = pros::millis();
 
@@ -283,24 +282,7 @@ void opcontrol() {
     }
 
     // toggle chassis break
-    BUTTON(pros::E_CONTROLLER_DIGITAL_B) {
-      chassis_break = !chassis_break;
-      model->setBrakeMode(chassis_break ? AbstractMotor::brakeMode::hold
-                                        : AbstractMotor::brakeMode::coast);
-
-      // doesn't work, set brake mode for each motor individually
-      auto blMotor = model->getBottomLeftMotor();
-      auto brMotor = model->getBottomRightMotor();
-      auto tlMotor = model->getTopLeftMotor();
-      auto trMotor = model->getTopRightMotor();
-
-      for (auto motor : {blMotor, brMotor, tlMotor, trMotor}) {
-        motor->setBrakeMode(chassis_break ? AbstractMotor::brakeMode::hold
-                                          : AbstractMotor::brakeMode::coast);
-      }
-
-      pros::lcd::set_text(4, "Chassis Break: " + std::to_string(chassis_break));
-    }
+    BUTTON(pros::E_CONTROLLER_DIGITAL_B) { movement::toggleChassisBreak(); }
 
     // toggle intake
     BUTTON(pros::E_CONTROLLER_DIGITAL_R1) {
@@ -399,11 +381,16 @@ void opcontrol() {
 
     // set home location for moving
     BUTTON(pros::E_CONTROLLER_DIGITAL_L1) {
+      printf("single press, last press: %d", l1_last_press);
       // if double press, set the location
       if (pros::millis() - l1_last_press < 200) {
         // set home location
         movement::goalLocation = odom::globalPoint;
+        master.rumble(".");
         pros::lcd::set_text(8, "Home Set");
+        printf("dobule press, home is %f, %f", movement::goalLocation.x,
+               movement::goalLocation.y);
+        l1_last_press = -1;
       } else {
         // if single press, set last press to current time
         l1_last_press = pros::millis();
@@ -411,7 +398,7 @@ void opcontrol() {
     }
     else {
       // if it is a single press, look at home location
-      if (l1_last_press != -1 && pros::millis() - l1_last_press > 200) {
+      if (l1_last_press != -1 && (pros::millis() - l1_last_press) > 200) {
         l1_last_press = -1;
 
         // calculate required angle
@@ -419,7 +406,28 @@ void opcontrol() {
             std::atan2(movement::goalLocation.y - odom::globalPoint.y,
                        movement::goalLocation.x - odom::globalPoint.x);
 
-        printf("turning to %f", angle);
+        // turn to degrees
+        angle = utils::getDegrees(angle);
+
+        // we want the back to face this direction
+        angle += 180;
+
+        // if angle is not in [0, 360), make it
+        if (angle < 0) {
+          angle += 360;
+        } else if (angle >= 360) {
+          angle -= 360;
+        }
+
+        printf("turning to %f\n", angle);
+        printf("goal is at %f, %f\n", movement::goalLocation.x,
+               movement::goalLocation.y);
+        printf("current is at %f, %f\n", odom::globalPoint.x,
+               odom::globalPoint.y);
+        printf("errorX is %f\n",
+               movement::goalLocation.x - odom::globalPoint.x);
+        printf("errorY is %f\n",
+               movement::goalLocation.y - odom::globalPoint.y);
 
         // look at that angle
         movement::turnTo(angle);

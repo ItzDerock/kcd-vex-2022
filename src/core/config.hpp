@@ -69,7 +69,7 @@ extern std::shared_ptr<ADIEncoder> left;
 extern std::shared_ptr<ADIEncoder> right;
 extern std::shared_ptr<ADIEncoder> middle;
 
-extern bool chassis_break;
+// extern bool chassis_break;
 extern bool auto_reload;
 
 // catapult states
