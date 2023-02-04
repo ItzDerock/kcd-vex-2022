@@ -11,6 +11,7 @@
 int DANGEROUS_OVERRIDE_LAST_PRESS = -1;
 bool endgame_launching = false;
 int l1_last_press = -1;
+int a_last_press = -1;
 
 enum DRIVE_MODE { FIELD_CENTERED, ROBOT_CENTERED };
 DRIVE_MODE drive_mode = FIELD_CENTERED;
@@ -44,6 +45,9 @@ void endgame() {
 }
 
 void run_catapult() {
+  if (catapult_state == DISABLED)
+    return;
+
   // printf("%d", catapult_state);
   if (catapult_state == IDLE && auto_reload) {
     catapult_state = REELING;
@@ -447,10 +451,23 @@ void opcontrol() {
 
     // toggle field mode
     BUTTON(pros::E_CONTROLLER_DIGITAL_A) {
-      if (drive_mode == FIELD_CENTERED) {
-        drive_mode = ROBOT_CENTERED;
+      // double press will tare heading
+      if (pros::millis() - a_last_press < 200) {
+        inertial->tare_heading();
+        master.rumble("..");
+        a_last_press = -1;
       } else {
-        drive_mode = FIELD_CENTERED;
+        a_last_press = pros::millis();
+      }
+    }
+    else {
+      if (a_last_press != -1 && (pros::millis() - a_last_press) > 200) {
+        a_last_press = -1;
+        if (drive_mode == FIELD_CENTERED) {
+          drive_mode = ROBOT_CENTERED;
+        } else {
+          drive_mode = FIELD_CENTERED;
+        }
       }
     }
 

@@ -92,6 +92,9 @@ void toggleMode() {
     auton_type = BACK;
     break;
   case BACK:
+    auton_type = BACK_SHORT;
+    break;
+  case BACK_SHORT:
     auton_type = SKILLS;
     break;
   case SKILLS:
