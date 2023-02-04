@@ -30,8 +30,9 @@ void run() {
 
   case BACK:
   case BACK_SHORT:
+  case BACK_DISKS:
     if (game_side == RED)
-      auton::run_red_back(auton_type == BACK_SHORT);
+      auton::run_red_back(auton_type == BACK_SHORT, auton_type == BACK_DISKS);
     else
       auton::run_blue_back();
     break;
@@ -79,10 +80,12 @@ void run() {
 void updateDisplay() {
   pros::lcd::set_text(
       3, "Auton: " +
-             std::string(auton_type == SIDE     ? "SIDE"
-                         : auton_type == BACK   ? "BACK"
-                         : auton_type == SKILLS ? "SKILLS"
-                                                : "NONE") +
+             std::string(auton_type == SIDE         ? "SIDE"
+                         : auton_type == BACK       ? "BACK"
+                         : auton_type == SKILLS     ? "SKILLS"
+                         : auton_type == BACK_SHORT ? "BACK SHORT"
+                         : auton_type == BACK_DISKS ? "BACK DISKS"
+                                                    : "NONE") +
              " | Side: " + std::string(game_side == RED ? "RED" : "BLUE"));
 }
 
@@ -95,6 +98,9 @@ void toggleMode() {
     auton_type = BACK_SHORT;
     break;
   case BACK_SHORT:
+    auton_type = BACK_DISKS;
+    break;
+  case BACK_DISKS:
     auton_type = SKILLS;
     break;
   case SKILLS:

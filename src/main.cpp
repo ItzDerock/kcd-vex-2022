@@ -16,7 +16,7 @@ int a_last_press = -1;
 enum DRIVE_MODE { FIELD_CENTERED, ROBOT_CENTERED };
 DRIVE_MODE drive_mode = FIELD_CENTERED;
 
-#define CATAPULT_POT_LOADING 2800
+#define CATAPULT_POT_LOADING 2750
 #define CATAPULT_POT_LAUNCHED 1100
 
 void endgame() {
@@ -24,22 +24,22 @@ void endgame() {
     return;
   endgame_launching = true;
 
-  if (catapult_state == DISABLED) {
-    endgame_launcher->set_value(1);
-  } else if (catapult_state != IDLE) {
-    catapult_state = DISABLED;
+  // if (catapult_state == DISABLED) {
+  // endgame_launcher->set_value(1);
+  // } else if (catapult_state != IDLE) {
+  // catapult_state = DISABLED;
 
-    // move until 1200 on potentiometer
-    catapult_motor->moveVelocity(100);
-    while (catapult_pot->get_value() > CATAPULT_POT_LAUNCHED) {
-      pros::delay(10);
-    }
-    catapult_motor->moveVelocity(0);
-
-    pros::delay(1500);
-
-    endgame_launcher->set_value(1);
-  }
+  // move until 1200 on potentiometer
+  // catapult_motor->moveVelocity(100);
+  // while (catapult_pot->get_value() > CATAPULT_POT_LAUNCHED) {
+  //   pros::delay(10);
+  // }
+  // catapult_motor->moveVelocity(0);
+  //
+  // pros::delay(1500);
+  //
+  endgame_launcher->set_value(1);
+  // }
 
   endgame_launching = false;
 }
@@ -58,7 +58,7 @@ void run_catapult() {
     // move until 1200 on potentiometer
     if (catapult_pot->get_value() < CATAPULT_POT_LOADING) {
       if (catapult_motor->getTargetVelocity() == 0) {
-        catapult_motor->moveVelocity(100);
+        catapult_motor->moveVelocity(55);
       }
     } else {
       catapult_motor->moveVelocity(0);
