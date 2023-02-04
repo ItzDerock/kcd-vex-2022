@@ -15,7 +15,7 @@ void run_red_back(bool quickMode) {
   pros::delay(500);
   model->xArcade(-20, 0, 0);
   pros::delay(500);
-  roller_motor->moveRelative(150, 50);
+  roller_motor->moveRelative(135, 50);
   model->xArcade(0, 0, 0);
 
   // done with first roller
@@ -35,7 +35,7 @@ void run_red_back(bool quickMode) {
     pros::delay(200);
     model->xArcade(-20, 0, 0);
     pros::delay(1000);
-    roller_motor->moveRelative(130, 50);
+    roller_motor->moveRelative(135, 50);
     pros::delay(100);
     model->xArcade(0, 0, 0);
   } else {
