@@ -10,7 +10,7 @@
 
 namespace utils {
 
-// map
+// takes a value and compresses it to fit in a range.
 inline double mapValue(double value, double istart, double istop, double ostart,
                        double ostop) {
   return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));

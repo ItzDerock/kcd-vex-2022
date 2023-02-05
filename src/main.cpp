@@ -8,42 +8,24 @@
 #include "controllers/movement/movement.hpp"
 #include "core/config.hpp"
 
+// variables to handle double clicking.
 int DANGEROUS_OVERRIDE_LAST_PRESS = -1;
-bool endgame_launching = false;
 int l1_last_press = -1;
 int a_last_press = -1;
 
+// handles the drive mode
 enum DRIVE_MODE { FIELD_CENTERED, ROBOT_CENTERED };
 DRIVE_MODE drive_mode = FIELD_CENTERED;
 
+// If the catapult is dry-firing, change this.
 #define CATAPULT_POT_LOADING 2750
 #define CATAPULT_POT_LAUNCHED 1100
 
-void endgame() {
-  if (endgame_launching)
-    return;
-  endgame_launching = true;
+// launches the endgame.
+void endgame() { endgame_launcher->set_value(1); }
 
-  // if (catapult_state == DISABLED) {
-  // endgame_launcher->set_value(1);
-  // } else if (catapult_state != IDLE) {
-  // catapult_state = DISABLED;
-
-  // move until 1200 on potentiometer
-  // catapult_motor->moveVelocity(100);
-  // while (catapult_pot->get_value() > CATAPULT_POT_LAUNCHED) {
-  //   pros::delay(10);
-  // }
-  // catapult_motor->moveVelocity(0);
-  //
-  // pros::delay(1500);
-  //
-  endgame_launcher->set_value(1);
-  // }
-
-  endgame_launching = false;
-}
-
+// Handles the catapult
+// Should be ran recursively
 void run_catapult() {
   if (catapult_state == DISABLED)
     return;
@@ -79,31 +61,35 @@ void run_catapult() {
     }
 }
 
-int last_stuck = 0;
-int stucktime = 0;
+// Automatically catapult stuck position.
+// Commented out because we have a manual override button for this situation.
 
-void catapult_stuckcheck() {
-  if (catapult_motor->getVelocityError() >= 99) {
-    if (pros::millis() - last_stuck > 1000) {
-      last_stuck = 0;
-      stucktime = 0;
-    }
+// int last_stuck = 0;
+// int stucktime = 0;
+//
+// void catapult_stuckcheck() {
+//   if (catapult_motor->getVelocityError() >= 99) {
+//     if (pros::millis() - last_stuck > 1000) {
+//       last_stuck = 0;
+//       stucktime = 0;
+//     }
+//
+//     last_stuck = pros::millis();
+//     stucktime++;
+//
+//     // if stuck for 2 seconds, turn off catapult
+//     if (stucktime > 10) {
+//       catapult_motor->moveVelocity(0);
+//       catapult_state = DISABLED;
+//     }
+//   }
+// }
 
-    last_stuck = pros::millis();
-    stucktime++;
-
-    // if stuck for 2 seconds, turn off catapult
-    if (stucktime > 10) {
-      catapult_motor->moveVelocity(0);
-      catapult_state = DISABLED;
-    }
-  }
-}
-
+// The main catapult loop
+// Should be invoked in a pros::Task
 void catapult_task() {
   while (true) {
     run_catapult();
-    // catapult_stuckcheck();
 
     // if (catapult_state == DISABLED)
     //   break;
@@ -125,22 +111,26 @@ void catapult_task() {
 void initialize() {
   pros::lcd::initialize();
 
+  // initialize the autonomous selector buttons.
   pros::lcd::register_btn0_cb(auton::toggleMode);
   pros::lcd::register_btn1_cb(auton::toggleSide);
   auton::updateDisplay();
 
   // button 3 should run auton if not in competition mode
+  // for debugging
   pros::lcd::register_btn2_cb([]() {
     if (!pros::competition::is_connected()) {
       auton::run();
     }
   });
 
+  // Calibrate everything
   pros::lcd::set_text(1, "[i] Calibrating IMU and POT...");
 
   // calibrate IMU
   while (inertial->is_calibrating()) {
     if (errno != 0) {
+      // log to screen so this is visible without a serial connection.
       pros::lcd::set_text(1, "[!] IMU Error " + std::to_string(errno));
       printf("IMU Error %s (%d)", strerror(errno), errno);
     } else {
@@ -150,17 +140,19 @@ void initialize() {
     pros::delay(10);
   }
 
-  // tare
+  // tare other sensors
   inertial->tare();
+
+  // this is important, makes sure our catapult is set to the hold brake mode.
   catapult_motor->setBrakeMode(AbstractMotor::brakeMode::hold);
 
   // calibrate catapult potentiometer
   catapult_pot->calibrate();
 
-  // start task to update position on screen
-  // pros::Task updatePositionOnScreenTask(movement:: updatePositionLoop);
+  // Start odometry tracking
   pros::Task odometry(odom::run);
 
+  // finally, update a message on the screen so we know we are good to go.
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
 
@@ -169,10 +161,7 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {
-  // movement::resetPosition();
-  pros::lcd::set_text(1, "[i] Robot Disabled");
-}
+void disabled() { pros::lcd::set_text(1, "[i] Robot Disabled"); }
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -184,19 +173,24 @@ void disabled() {
  * starts.
  */
 void competition_initialize() {
-  // recalibrate IMU
+  // recalibrate everything
   pros::lcd::set_text(1, "[i] Recalibrating IMU (competition)...");
 
+  // potentiometer
   catapult_pot->calibrate();
 
+  // inertial
   while (inertial->is_calibrating()) {
     pros::delay(10);
   }
 
+  // reset heading
   inertial->tare();
 
+  // reset to 0,0 position.
   odom::reset();
 
+  // and we're ready!
   pros::lcd::set_text(1, "[i] Ready to rumble!");
 }
 
@@ -212,6 +206,7 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
+  // hand it off to src/controllers/auton/auton.cpp
   pros::lcd::set_text(1, "[i] Autonomous Started");
   auton::run();
   pros::lcd::set_text(1, "[i] Autonomous Ended");
@@ -238,13 +233,11 @@ void opcontrol() {
   // if (catapult.get_state() == pros::E_TASK_STATE_DELETED) {
   //   catapult = pros::Task(catapult_task);
   // }
+  // UNCOMMENT IF WE GO BACK TO CATAPULT AS A TASK.
 
   while (true) {
-    // printf("Catapult state is %d", catapult.get_state());
     // run catapult updater
     run_catapult();
-    // printf("%d\n", pros::millis() - lastRun);
-    // lastRun = pros::millis();
 
     // get joystick values
     double irightSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
@@ -256,7 +249,7 @@ void opcontrol() {
     double forwardSpeed = utils::mapValue(iforwardSpeed, -127, 127, -1, 1);
     double rotationSpeed = utils::mapValue(irotSpeed, -127, 127, -1, 1);
 
-    // deadzone, if all values are below 0.1 return
+    // deadzone, if all values are below 0.01 ignore the input.
     if (fabs(rightSpeed) < 0.01 && fabs(forwardSpeed) < 0.01 &&
         fabs(rotationSpeed) < 0.01) {
       pros::lcd::set_text(3, "Chassis: Stopped");
@@ -290,6 +283,8 @@ void opcontrol() {
 
     // toggle intake
     BUTTON(pros::E_CONTROLLER_DIGITAL_R1) {
+      // if the intake speed is 0, then intake is off.
+      // turn it on
       if (intake_motor->getTargetVelocity() == 0 ||
           intake_motor->getTargetVelocity() == -300) {
         intake_motor->moveVelocity(300);
@@ -300,6 +295,7 @@ void opcontrol() {
 
     // reverse intake
     BUTTON(pros::E_CONTROLLER_DIGITAL_R2) {
+      // same logic as above.
       if (intake_motor->getTargetVelocity() == 0 ||
           intake_motor->getTargetVelocity() == 300) {
         intake_motor->moveVelocity(-300);
@@ -315,32 +311,31 @@ void opcontrol() {
 
     // toggle flywheel
     BUTTON(pros::E_CONTROLLER_DIGITAL_Y) {
+      // update the catapult state to the new state
       switch (catapult_state) {
       case REELING:
       case LAUNCHING:
       case DISABLED:
-        // pass
+        // pass, run_catapult() will handle it.
         break;
 
+      // IDLE means we are in a position to start reeling back.
       case IDLE:
-        // set state to REELING
+        // set state to REELING and let run_catapult() handle it next tick
         catapult_state = REELING;
         catapult_motor->moveVelocity(100);
         break;
 
+      // READY_TO_LAUNCH means we can launch.
       case READY_TO_LAUNCH:
-        // spin intake_motor until multiple of 360
-        // auto needed = 360 - std::fmod(intake_motor->getPosition(), 360);
-        // intake_motor->moveRelative(needed, 200);
-
-        // set state to LAUNCHING
+        // set state to LAUNCHING. run_catapult() will handle it after this.
         catapult_state = LAUNCHING;
         catapult_motor->moveVelocity(100);
         break;
       }
     }
 
-    // toggle roller
+    // toggle the roller motor
     BUTTON(pros::E_CONTROLLER_DIGITAL_L2) {
       if (roller_motor->getTargetVelocity() == 0) {
         roller_motor->moveVelocity(100);
@@ -349,30 +344,25 @@ void opcontrol() {
       }
     }
 
-    // toggle auto-reload
+    // toggle auto-reload in case we ever need it off.
     BUTTON(pros::E_CONTROLLER_DIGITAL_X) {
       auto_reload = !auto_reload;
       pros::lcd::set_text(7, "Auto Reload: " + std::to_string(auto_reload));
     }
 
     // launch endgame
-    BUTTON(pros::E_CONTROLLER_DIGITAL_LEFT) {
-      endgame();
-      // run endgame() as a task
-      // auto task = pros::Task(endgame);
-      // printf("endgame task started: %d", task.get_state());
-    }
+    BUTTON(pros::E_CONTROLLER_DIGITAL_LEFT) { endgame(); }
 
     // disable catapult
     BUTTON(pros::E_CONTROLLER_DIGITAL_RIGHT) {
-      printf("DANGEROUS BUTTON PRESSED: %d",
-             pros::millis() - DANGEROUS_OVERRIDE_LAST_PRESS);
       if (pros::millis() - DANGEROUS_OVERRIDE_LAST_PRESS < 1000) {
         // if pressed twice within 1 second, disable catapult
+        // this will set the catapult to manual control
+        // only use when catapult is malfunctioning or is stuck.
         catapult_state = DISABLED;
         catapult_motor->moveVelocity(0);
 
-        // rumble controller
+        // rumble controller so we know this happened.
         master.rumble(".--");
       } else {
         // if pressed once, set last press to current time
@@ -449,7 +439,7 @@ void opcontrol() {
       }
     }
 
-    // toggle field mode
+    // toggle field centered mode
     BUTTON(pros::E_CONTROLLER_DIGITAL_A) {
       // double press will tare heading
       if (pros::millis() - a_last_press < 200) {
@@ -461,6 +451,8 @@ void opcontrol() {
       }
     }
     else {
+      // otherwise, it is a single press.
+      // toggle modes
       if (a_last_press != -1 && (pros::millis() - a_last_press) > 200) {
         a_last_press = -1;
         if (drive_mode == FIELD_CENTERED) {
@@ -476,12 +468,7 @@ void opcontrol() {
         6, "Potentiometer: " + std::to_string(catapult_pot->get_value()) +
                " Catapult: " + std::to_string(catapult_state));
 
-    // print actual flywheel speed on 4th line of LCD
-    // pros::lcd::set_text(
-    //     4, "Flywheel: " + std::to_string(flywheel->getActualVelocity()) +
-    //            " rpm (" + std::to_string(flywheel->getTemperature()) + "C)");
-
-    // delay
+    // small delay so other tasks get some cpu cycles.
     pros::delay(10);
   }
 }
