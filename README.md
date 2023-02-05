@@ -1,5 +1,5 @@
 # 76308A's Vex Spin Up Code
-Won the "Think" award (best programming).  
+Won the "Think" award (best programming) at the AHS Eagle Nation Challenge.  
 Unfortnuately it wasn't a state-qualifying award.
 
 Has the following amazing features
@@ -12,7 +12,10 @@ Built using C++, PROS, and okapi.
 
 ## File Structure
 `src/` contains all our code, broken down into a few sections.  
-`utilities/` contains utility programs.
+`utilities/` contains our custom utility programs.
+`logs/` contains PID run logs.  
+`include/` contains the okapi and PROs library headers.  
+`firmware/` contains the PROs static library.
 
 ### `utilities/PIDPlotter.py`
 Graphs the PID data in real time for debugging and tuning.

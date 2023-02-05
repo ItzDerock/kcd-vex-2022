@@ -5,7 +5,7 @@ import sys
 import matplotlib.pyplot as plt
 
 # Output data to a file
-output = open('run.csv', 'w');
+output = open('./logs/latest.csv', 'w');
 
 # Create three subplots for x, y, and angle
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
