@@ -50,8 +50,11 @@ auto toFieldCentered(double rightSpeed, double forwardSpeed) {
 
 // PIDController xPID = PIDController(0.2, 0.00005, 0.002);
 // PIDController yPID = PIDController(0.2, 0.00005, 0.002);
-PIDController xPID(0.5, 0.00005, 0.001);
-PIDController yPID(0.5, 0.00005, 0.001);
+// PIDController xPID(1.5, 0.00002, 0.001);
+// PIDController yPID(1.5, 0.00002, 0.001);
+// 0.25 = good
+PIDController xPID(0.125, 0.00005, 0.002);
+PIDController yPID(0.125, 0.00005, 0.002);
 PIDController anglePID = PIDController(0.02, 0.0001, 0.001);
 
 void setAngleTolerance(double tolerance) { ANGLE_ERROR_TOLERANCE = tolerance; }
@@ -66,7 +69,7 @@ void moveTo(double x, double y, double targetAngle, double maxVelocity) {
   double lastTime = pros::millis();
 
   // debug csv header
-  printf("x, y, angle, reqX, reqY, reqAng, xPow, yPow, angPow\n");
+  // printf("x, y, angle, reqX, reqY, reqAng, xPow, yPow, angPow\n");
 
   // Run the loop
   while (true) {
@@ -102,22 +105,12 @@ void moveTo(double x, double y, double targetAngle, double maxVelocity) {
       break;
 
     // log for debugging
-    printf("%f, %f, %f, %f, %f, %f, %f, %f, %f\n", odom::globalPoint.x,
-           odom::globalPoint.y, currHeading, requiredX, requiredY,
-           requiredAngle, xPower, yPower, anglePower);
+    // printf("%f, %f, %f, %f, %f, %f, %f, %f, %f\n", odom::globalPoint.x,
+    //        odom::globalPoint.y, currHeading, requiredX, requiredY,
+    //        requiredAngle, xPower, yPower, anglePower);
 
     // convert to field centered
     std::pair<double, double> fieldCentered = toFieldCentered(xPower, yPower);
-
-    // set to zero if error is too small
-    // if (fabs(requiredX) < MINIMUM_ERROR)
-    // fieldCentered.first = 0;
-
-    // if (fabs(requiredY) < MINIMUM_ERROR)
-    // fieldCentered.second = 0;
-
-    // if (fabs(requiredAngle) < 2)
-    // anglePower = 0;
 
     // Set the motor power
     model->xArcade(

@@ -6,6 +6,8 @@
 #include "../../util.hpp"
 #include "main.h"
 #include "movement.hpp"
+#include "pros/llemu.hpp"
+#include <string>
 
 // constants
 // #define BACK_ENC_OFFSET = 5.75;
@@ -114,6 +116,16 @@ void odom::run() {
 
     odom::updateSensors();
     odom::updatePosition();
+
+    // auto odom = chassis->getOdometry()->getState();
+
+    // pros::lcd::set_text(2, "X: " + std::to_string(odom.x.getValue()) +
+    //                            "Y: " + std::to_string(odom.y.getValue()) +
+    //                            "A: " +
+    //                            std::to_string(odom.theta.getValue()));
+
+    // printf("POS: %f, %f, %f", odom.x.getValue(), odom.y.getValue(),
+    // odom.theta.getValue());
 
     pros::lcd::set_text(2, "X: " + std::to_string(globalPoint.x) +
                                " Y: " + std::to_string(globalPoint.y));

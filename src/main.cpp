@@ -19,7 +19,7 @@ DRIVE_MODE drive_mode = FIELD_CENTERED;
 
 // If the catapult is dry-firing, change this.
 #define CATAPULT_POT_LOADING 2750
-#define CATAPULT_POT_LAUNCHED 1100
+#define CATAPULT_POT_LAUNCHED 1400
 
 // launches the endgame.
 void endgame() { endgame_launcher->set_value(1); }
@@ -151,6 +151,7 @@ void initialize() {
 
   // Start odometry tracking
   pros::Task odometry(odom::run);
+  // chassis->startOdomThread();
 
   // finally, update a message on the screen so we know we are good to go.
   pros::lcd::set_text(1, "[i] Ready to rumble!");
