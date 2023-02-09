@@ -55,11 +55,13 @@ auto toFieldCentered(double rightSpeed, double forwardSpeed) {
 // 0.25 = good
 PIDController xPID(0.125, 0.00005, 0.002);
 PIDController yPID(0.125, 0.00005, 0.002);
-PIDController anglePID = PIDController(0.02, 0.0001, 0.001);
+PIDController anglePID = PIDController(0.025, 0.0002, 0.001);
 
+double maxVelocity = 125;
 void setAngleTolerance(double tolerance) { ANGLE_ERROR_TOLERANCE = tolerance; }
+void setMaxVelocity(double velocity) { maxVelocity = velocity; }
 
-void moveTo(double x, double y, double targetAngle, double maxVelocity) {
+void moveTo(double x, double y, double targetAngle) {
   // reset the PID systems
   xPID.reset();
   yPID.reset();
@@ -126,14 +128,13 @@ void moveTo(double x, double y, double targetAngle, double maxVelocity) {
 }
 
 // overloads
-void moveTo(double x, double y, double targetAngle) {
-  moveTo(x, y, targetAngle, 127);
-}
-
+// void moveTo(double x, double y, double targetAngle) {
+//   moveTo(x, y, targetAngle, 127);
+// }
+//
 void moveTo(double x, double y) { moveTo(x, y, odom::globalPoint.angle, 127); }
 
-void moveTo(double x, double y, double targetAngle, double maxVelocity,
-            double maxError) {
+void moveTo(double x, double y, double targetAngle, double maxError) {
   double oldError = MINIMUM_ERROR;
   MINIMUM_ERROR = maxError;
   moveTo(x, y, targetAngle, maxVelocity);

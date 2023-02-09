@@ -26,12 +26,12 @@ void run_red_back(bool quickMode, bool pushDisks) {
 
     // center area
     movement::setAngleTolerance(10);
-    movement::moveTo(45, 27, -20, 127, 5);
+    movement::moveTo(45, 27, -20, 5);
     pros::delay(100);
-    movement::moveTo(64, 60, 0, 127, 5);
+    movement::moveTo(64, 60, 0, 5);
     movement::setAngleTolerance(2);
 
-    movement::moveTo(90, 68, 90, 127, 1.25);
+    movement::moveTo(90, 68, 90, 1.25);
     pros::delay(200);
     model->xArcade(-20, 0, 0);
     pros::delay(1000);

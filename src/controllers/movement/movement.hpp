@@ -20,14 +20,13 @@ extern Point goalLocation;
  * Move to a location (absolute).
  * Max velocity between 1 and 127.
  */
-void moveTo(double x, double y, double finalAngle, double maxVelocity,
-            double maxError);
-void moveTo(double x, double y, double finalAngle, double maxVelocity);
 void moveTo(double x, double y, double finalAngle);
+void moveTo(double x, double y, double finalAngle, double maxError);
+// void moveTo(double x, double y, double finalAngle);
 void moveTo(double x, double y);
 
 void setAngleTolerance(double tolerance);
-
+void setMaxVelocity(double velocity);
 /**
  * Turn to an angle (absolute).
  */

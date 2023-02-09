@@ -23,6 +23,8 @@
  */
 #define CATAPULT_MOTOR 5
 #define CATAPULT_POTENTIOMETER 1
+#define CATAPULT_POT_LOADING 2750
+#define CATAPULT_POT_LAUNCHED 1400
 
 /**
  * Intake ports

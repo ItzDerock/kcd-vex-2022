@@ -17,10 +17,6 @@ int a_last_press = -1;
 enum DRIVE_MODE { FIELD_CENTERED, ROBOT_CENTERED };
 DRIVE_MODE drive_mode = FIELD_CENTERED;
 
-// If the catapult is dry-firing, change this.
-#define CATAPULT_POT_LOADING 2750
-#define CATAPULT_POT_LAUNCHED 1400
-
 // launches the endgame.
 void endgame() { endgame_launcher->set_value(1); }
 
