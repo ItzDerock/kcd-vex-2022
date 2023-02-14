@@ -11,8 +11,10 @@
 
 namespace auton {
 
-AutonType auton_type = NONE;
-GameSide game_side = RED;
+// AutonType auton_type = NONE;
+// GameSide game_side = RED;
+AutonType auton_type = BACK;
+GameSide game_side = BLUE;
 
 void run() {
   if (auton_type == NONE) {

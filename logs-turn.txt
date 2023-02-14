@@ -1,0 +1,83 @@
+Transferring V5 to download channel
+
+
+
+         _+=+_
+      .-`  .  `-.          8888888b.  8888888b.   .d88888b.   .d8888b.
+   _+`     "     `+_       888   Y88b 888   Y88b d88P" "Y88b d88P  Y88b
+  \\\sssssssssssss///      888    888 888    888 888     888 Y88b.
+     .ss\  *  /ss.         888   d88P 888   d88P 888     888  "Y888b.
+ .+bm  .s  *  s.  md+.     8888888P"  8888888P"  888     888     "Y88b.
+.hMMMMs .  *  . sMMMMh.    888        888 T88b   888     888       "888
+ `\hMMMb \ | / dMMMh:      888        888  T88b  Y88b. .d88P Y88b  d88P
+   -SNMNo  -  oNMNs-       888        888   T88b  "Y88888P"   "Y8888P"
+     `+dMh\./dMd/
+        `:yNy:`                      Powered by PROS for VEX V5
+           "                Copyright (c) Purdue University ACM SIGBots
+Version:        3.7.3     Platform:  V1.1.2 (b34)     Uptime:    0.000 s
+Compiled:   Feb 10 2023 14:57:09     Directory:  hool/2022/Vex Robotics
+
+
+single press, last press: -1atan2 returned -1.635291 (rad)
+turning to 86.304756
+goal is at 0.000000, 0.000000
+current is at 1.096052, 16.971022
+errorX is -1.096052
+errorY is -16.971022
+single press, last press: -1atan2 returned -1.646547 (rad)
+turning to 85.659787
+goal is at 0.000000, 0.000000
+current is at 1.413178, 18.619868
+errorX is -1.413178
+errorY is -18.619868
+single press, last press: -1atan2 returned -1.578859 (rad)
+turning to 89.538041
+goal is at 0.000000, 0.000000
+current is at 0.144952, 17.977716
+errorX is -0.144952
+errorY is -17.977716
+single press, last press: -1atan2 returned -1.572138 (rad)
+turning to 89.923131
+goal is at 0.000000, 0.000000
+current is at 0.025202, 18.784954
+errorX is -0.025202
+errorY is -18.784954
+
+
+
+
+
+---- MOVED FORWARDS ---- 
+-single press, last press: -1atan2 returned -1.572138 (rad)
+turning to 89.923137
+goal is at 0.000000, 0.000000
+current is at 0.025197, 18.782850
+errorX is -0.025197
+errorY is -18.782850
+
+correction = -90deg
+---- MOVED BACKWARDS ----
+single press, last press: -1atan2 returned 1.594148 (rad)
+turning to 271.337975
+goal is at 0.000000, 0.000000
+current is at 0.630644, -27.001008
+errorX is -0.630644
+errorY is 27.001008
+
+-90 
+---- MOVED LEFT ----
+single press, last press: -1atan2 returned 0.022597 (rad)
+turning to 181.294739
+goal is at 0.000000, 0.000000
+current is at -24.192611, -0.546784
+errorX is 24.192611
+errorY is 0.546784
+
+
+---- MOVED RIGHT ----
+single press, last press: -1atan2 returned -2.844880 (rad)
+turning to 17.000381
+goal is at 0.000000, 0.000000
+current is at 42.514931, 12.998428
+errorX is -42.514931
+errorY is -12.998428

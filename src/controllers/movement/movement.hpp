@@ -36,5 +36,9 @@ extern bool chassis_break;
 void setChassisBreak(bool brake);
 void toggleChassisBreak();
 
+// catapult stuff
+void loadCatapultSync();
+void fireCatapultSync();
+
 } // namespace movement
 #endif // MOVEMENT_HPP

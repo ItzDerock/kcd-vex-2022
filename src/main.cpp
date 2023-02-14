@@ -57,30 +57,6 @@ void run_catapult() {
     }
 }
 
-// Automatically catapult stuck position.
-// Commented out because we have a manual override button for this situation.
-
-// int last_stuck = 0;
-// int stucktime = 0;
-//
-// void catapult_stuckcheck() {
-//   if (catapult_motor->getVelocityError() >= 99) {
-//     if (pros::millis() - last_stuck > 1000) {
-//       last_stuck = 0;
-//       stucktime = 0;
-//     }
-//
-//     last_stuck = pros::millis();
-//     stucktime++;
-//
-//     // if stuck for 2 seconds, turn off catapult
-//     if (stucktime > 10) {
-//       catapult_motor->moveVelocity(0);
-//       catapult_state = DISABLED;
-//     }
-//   }
-// }
-
 // The main catapult loop
 // Should be invoked in a pros::Task
 void catapult_task() {
@@ -396,19 +372,25 @@ void opcontrol() {
         double angle =
             std::atan2(movement::goalLocation.y - odom::globalPoint.y,
                        movement::goalLocation.x - odom::globalPoint.x);
-
+        printf("atan2 returned %f (rad)\n", angle);
         // turn to degrees
         angle = utils::getDegrees(angle);
 
+        // make sure within range
+        angle = std::fmod(angle + 360.0, 360);
+
+        // face back
+        angle = std::fmod(angle + 180.0, 360);
+
         // we want the back to face this direction
-        angle += 180;
+        // angle += 180;
 
         // if angle is not in [0, 360), make it
-        if (angle < 0) {
-          angle += 360;
-        } else if (angle >= 360) {
-          angle -= 360;
-        }
+        // if (angle < 0) {
+        // angle += 360;
+        // } else if (angle >= 360) {
+        // angle -= 360;
+        // }
 
         printf("turning to %f\n", angle);
         printf("goal is at %f, %f\n", movement::goalLocation.x,
