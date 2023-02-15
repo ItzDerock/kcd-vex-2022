@@ -48,23 +48,27 @@ errorY is -18.784954
 
 
 ---- MOVED FORWARDS ---- 
--single press, last press: -1atan2 returned -1.572138 (rad)
+atan2 returned -1.572138 (rad)
 turning to 89.923137
 goal is at 0.000000, 0.000000
 current is at 0.025197, 18.782850
 errorX is -0.025197
 errorY is -18.782850
 
+EXPECTED 0deg
 correction = -90deg
+
 ---- MOVED BACKWARDS ----
-single press, last press: -1atan2 returned 1.594148 (rad)
+atan2 returned 1.594148 (rad)
 turning to 271.337975
 goal is at 0.000000, 0.000000
 current is at 0.630644, -27.001008
 errorX is -0.630644
 errorY is 27.001008
 
--90 
+EXPECTED: 180deb
+correction = -90deg
+
 ---- MOVED LEFT ----
 single press, last press: -1atan2 returned 0.022597 (rad)
 turning to 181.294739
@@ -73,11 +77,16 @@ current is at -24.192611, -0.546784
 errorX is 24.192611
 errorY is 0.546784
 
+EXPECTED: 270deg
+correction = +90deg
 
 ---- MOVED RIGHT ----
-single press, last press: -1atan2 returned -2.844880 (rad)
+atan2 returned -2.844880 (rad)
 turning to 17.000381
 goal is at 0.000000, 0.000000
 current is at 42.514931, 12.998428
 errorX is -42.514931
 errorY is -12.998428
+
+EXPECTED: 90deg
+correction = +90deg

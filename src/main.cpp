@@ -292,14 +292,14 @@ void opcontrol() {
         // pass, run_catapult() will handle it.
         break;
 
-      // IDLE means we are in a position to start reeling back.
+        // IDLE means we are in a position to start reeling back.
       case IDLE:
         // set state to REELING and let run_catapult() handle it next tick
         catapult_state = REELING;
         catapult_motor->moveVelocity(100);
         break;
 
-      // READY_TO_LAUNCH means we can launch.
+        // READY_TO_LAUNCH means we can launch.
       case READY_TO_LAUNCH:
         // set state to LAUNCHING. run_catapult() will handle it after this.
         catapult_state = LAUNCHING;
@@ -373,14 +373,16 @@ void opcontrol() {
             std::atan2(movement::goalLocation.y - odom::globalPoint.y,
                        movement::goalLocation.x - odom::globalPoint.x);
         printf("atan2 returned %f (rad)\n", angle);
+        angle = -angle + M_PI / 2;
+
         // turn to degrees
         angle = utils::getDegrees(angle);
 
         // make sure within range
-        angle = std::fmod(angle + 360.0, 360);
+        angle = std::fmod(angle + 360.0, 360.0);
 
         // face back
-        angle = std::fmod(angle + 180.0, 360);
+        angle = std::fmod(angle + 180.0, 360.0);
 
         // we want the back to face this direction
         // angle += 180;
