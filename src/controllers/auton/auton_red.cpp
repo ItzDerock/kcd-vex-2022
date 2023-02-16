@@ -1,6 +1,7 @@
 #include "../../core/config.hpp"
 #include "../movement/movement.hpp"
 #include "../movement/odom.hpp"
+#include "./auton_partials.hpp"
 #include "main.h"
 
 #ifndef AUTON_RED_CPP
@@ -10,12 +11,13 @@ namespace auton {
 
 void run_red_back(bool quickMode, bool pushDisks) {
   movement::setChassisBreak(true);
-  movement::moveTo(0, -24, 0);
+  movement::moveTo(0, -18, 0);
 
   pros::delay(500);
   model->xArcade(-20, 0, 0);
   pros::delay(500);
   roller_motor->moveRelative(120, 50);
+  pros::delay(100);
   model->xArcade(0, 0, 0);
 
   // done with first roller

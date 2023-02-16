@@ -50,3 +50,5 @@ Contains all the port configuration stuff.
 
 ### `src/core/config.cpp`
 Takes all the config.hpp stuff and sets up the drivetrain and motor classes for use in other files.
+
+# How to run tests

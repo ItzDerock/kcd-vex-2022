@@ -10,8 +10,6 @@ movement::Point previousPosition(0, 0);
 movement::Point position(0, 0);
 double previous_time = pros::millis() / 1000.0;
 
-FILE *usd_write_file = fopen("/usd/accel.txt", "w");
-
 // update using inertial (pros::IMU)
 void updatePosition() {
   double curr_time = pros::millis() / 1000.0;
@@ -33,10 +31,10 @@ void updatePosition() {
 
   // print the output
   // printf("Accel X: %f | Accel Y: %f", accel.x, accel.y);
-  fputs(
-      std::to_string(accel.x) + " " + std::to_string(accel.y),
-      usd_write_file
-  );
+  // fputs(
+  //     std::to_string(accel.x) + " " + std::to_string(accel.y),
+  //     usd_write_file
+  // );
 
   // if accel is under 0.05 then it is probably noise
   if (std::abs(accel.x) < 0.05) {

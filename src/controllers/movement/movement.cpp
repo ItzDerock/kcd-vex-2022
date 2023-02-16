@@ -55,7 +55,7 @@ auto toFieldCentered(double rightSpeed, double forwardSpeed) {
 // 0.25 = good
 PIDController xPID(0.125, 0.00005, 0.002);
 PIDController yPID(0.125, 0.00005, 0.002);
-PIDController anglePID = PIDController(0.025, 0.0004, 0.001);
+PIDController anglePID = PIDController(0.025, 0.00006, 0.002);
 
 double maxVelocity = 125;
 void setAngleTolerance(double tolerance) { ANGLE_ERROR_TOLERANCE = tolerance; }
@@ -130,6 +130,8 @@ void moveTo(double x, double y, double targetAngle) {
   model->stop();
 }
 
+void setTolerance(double tolerance) { MINIMUM_ERROR = tolerance; }
+
 // overloads
 // void moveTo(double x, double y, double targetAngle) {
 //   moveTo(x, y, targetAngle, 127);
@@ -138,14 +140,14 @@ void moveTo(double x, double y, double targetAngle) {
 void moveTo(double x, double y) { moveTo(x, y, odom::globalPoint.angle, 127); }
 
 void moveTo(double x, double y, double targetAngle, double maxError) {
-  double oldError = MINIMUM_ERROR;
-  MINIMUM_ERROR = maxError;
+  // double oldError = MINIMUM_ERROR;
+  // MINIMUM_ERROR = maxError;
   moveTo(x, y, targetAngle, maxVelocity);
-  MINIMUM_ERROR = oldError;
+  // MINIMUM_ERROR = oldError;
 }
 
 // turn to
-void turnTo(double targetAngle) {
+void turnTo(double targetAngle, double error) {
   // Reset the PID system
   anglePID.reset();
 
@@ -168,7 +170,7 @@ void turnTo(double targetAngle) {
     double anglePower = anglePID.update(requiredAngle);
 
     // Break loop if we are close enough
-    if (fabs(requiredAngle) < 2)
+    if (fabs(requiredAngle) < error)
       break;
 
     // Set the motor power
@@ -179,6 +181,8 @@ void turnTo(double targetAngle) {
 
   model->stop();
 }
+
+void turnTo(double targetAngle) { turnTo(targetAngle, 2); }
 
 bool chassis_break = false;
 void setChassisBreak(bool value) {
@@ -204,7 +208,7 @@ void toggleChassisBreak() { setChassisBreak(!chassis_break); }
 
 // RUN THIS *ONLY* IF CATA TASK IS NOT RUNNING!
 void loadCatapultSync() {
-  catapult_motor->moveVelocity(65);
+  catapult_motor->moveVelocity(45);
   while (catapult_pot->get_value() < CATAPULT_POT_LOADING) {
     pros::delay(10);
   }

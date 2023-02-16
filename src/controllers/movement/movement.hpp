@@ -25,12 +25,14 @@ void moveTo(double x, double y, double finalAngle, double maxError);
 // void moveTo(double x, double y, double finalAngle);
 void moveTo(double x, double y);
 
+void setTolerance(double tolerance);
 void setAngleTolerance(double tolerance);
 void setMaxVelocity(double velocity);
 /**
  * Turn to an angle (absolute).
  */
 void turnTo(double angle);
+void turnTo(double angle, double maxError);
 
 extern bool chassis_break;
 void setChassisBreak(bool brake);
