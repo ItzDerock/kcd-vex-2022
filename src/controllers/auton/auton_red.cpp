@@ -47,7 +47,7 @@ void run_red_back(bool quickMode, bool pushDisks) {
       movement::moveTo(0, 40, 90);
       pros::delay(100);
       movement::moveTo(0, 0, 90);
-      movement::turnTo(180);
+      // movement::turnTo(180);
     }
   }
 
