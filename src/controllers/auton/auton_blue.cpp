@@ -9,6 +9,9 @@
 namespace auton {
 
 void run_blue_side() {
+  movement::setChassisBreak(true);
+  movement::setAngleTolerance(1);
+  movement::moveTo(0, 0, 370 - 37);
   // chassis->driveToPoint({0_ft, 1_ft});
 }
 void run_blue_back() {
@@ -27,19 +30,20 @@ void run_blue_back() {
 
   // move to pick up disks
   movement::setMaxVelocity(0.50);
-  movement::moveTo(24, 13, 45);
+  // movement::moveTo(24, 13, 45);
+  movement::moveTo(22, 9, 45);
 
   // stop intake
-  pros::delay(250);
+  // pros::delay(250);
   intake_motor->moveVelocity(0);
   movement::setMaxVelocity(127);
 
   // turn to face goal
   movement::setAngleTolerance(1);
   movement::setTolerance(1);
-  movement::moveTo(38, 21, 45);
+  movement::moveTo(34, 23, 360 - 37);
   // pros::delay(500);
-  movement::turnTo(360 - 45, 1);
+  // movement::turnTo(360 - 30, 1);
 
   // fire disks
   movement::fireCatapultSync();

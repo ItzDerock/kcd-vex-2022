@@ -16,7 +16,8 @@ double PIDController::update(double error) {
   double kDOutput = _kD * derivative;
 
   if (debug)
-    printf("kP: %f, kI: %f, kD: %f\n", kPOutput, kIOutput, kDOutput);
+    printf("err: %f, kP: %f, kI: %f, kD: %f\n", error, kPOutput, kIOutput,
+           kDOutput);
 
   double output = kPOutput + kIOutput + kDOutput;
 
@@ -27,4 +28,7 @@ double PIDController::update(double error) {
 void PIDController::reset() {
   _previousError = 0;
   _integral = 0;
+
+  if (debug)
+    printf("PID reset");
 }

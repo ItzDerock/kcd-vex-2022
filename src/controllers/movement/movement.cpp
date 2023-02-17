@@ -55,7 +55,7 @@ auto toFieldCentered(double rightSpeed, double forwardSpeed) {
 // 0.25 = good
 PIDController xPID(0.125, 0.00005, 0.002);
 PIDController yPID(0.125, 0.00005, 0.002);
-PIDController anglePID = PIDController(0.025, 0.00006, 0.002);
+PIDController anglePID = PIDController(0.05, 0.00006, 0.002, true);
 
 double maxVelocity = 125;
 void setAngleTolerance(double tolerance) { ANGLE_ERROR_TOLERANCE = tolerance; }
@@ -111,8 +111,9 @@ void moveTo(double x, double y, double targetAngle) {
     //        odom::globalPoint.y, currHeading, requiredX, requiredY,
     //        requiredAngle, xPower, yPower, anglePower);
 
-    printf("maxVel: %f, xPow: %f, yPow: %f, angPow: %f\n", maxVelocity, xPower,
-           yPower, anglePower);
+    // printf("maxVel: %f, xPow: %f, yPow: %f, angPow: %f\n", maxVelocity,
+    // xPower,
+    //        yPower, anglePower);
 
     // convert to field centered
     std::pair<double, double> fieldCentered = toFieldCentered(xPower, yPower);
@@ -140,10 +141,10 @@ void setTolerance(double tolerance) { MINIMUM_ERROR = tolerance; }
 void moveTo(double x, double y) { moveTo(x, y, odom::globalPoint.angle, 127); }
 
 void moveTo(double x, double y, double targetAngle, double maxError) {
-  // double oldError = MINIMUM_ERROR;
-  // MINIMUM_ERROR = maxError;
+  double oldError = MINIMUM_ERROR;
+  MINIMUM_ERROR = maxError;
   moveTo(x, y, targetAngle, maxVelocity);
-  // MINIMUM_ERROR = oldError;
+  MINIMUM_ERROR = oldError;
 }
 
 // turn to
@@ -208,14 +209,17 @@ void toggleChassisBreak() { setChassisBreak(!chassis_break); }
 
 // RUN THIS *ONLY* IF CATA TASK IS NOT RUNNING!
 void loadCatapultSync() {
+  intake_holder->moveAbsolute(30, 600);
   catapult_motor->moveVelocity(45);
   while (catapult_pot->get_value() < CATAPULT_POT_LOADING) {
     pros::delay(10);
   }
   catapult_motor->moveVelocity(0);
+  intake_holder->moveAbsolute(0, 600);
 }
 
 void fireCatapultSync() {
+  intake_holder->moveAbsolute(30, 600);
   catapult_motor->moveVelocity(100);
   while (catapult_pot->get_value() > CATAPULT_POT_LAUNCHED) {
     pros::delay(10);

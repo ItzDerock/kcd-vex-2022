@@ -30,6 +30,7 @@
  * Intake ports
  */
 #define INTAKE_MOTOR 6
+#define INTAKE_HOLDER 11
 
 /**
  * Roller thing port
@@ -66,6 +67,7 @@ extern std::shared_ptr<Motor> catapult_motor;
 extern std::shared_ptr<pros::ADIAnalogIn> catapult_pot;
 extern std::shared_ptr<Motor> intake_motor;
 extern std::shared_ptr<Motor> roller_motor;
+extern std::shared_ptr<Motor> intake_holder;
 extern std::shared_ptr<pros::ADIDigitalOut> endgame_launcher;
 extern std::shared_ptr<ADIEncoder> left;
 extern std::shared_ptr<ADIEncoder> right;

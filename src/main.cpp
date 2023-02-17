@@ -31,6 +31,17 @@ void run_catapult() {
     catapult_state = REELING;
   }
 
+  // if reeling
+  if (catapult_state == REELING || catapult_state == LAUNCHING) {
+    if (intake_holder->getTargetPosition() == 0) {
+      intake_holder->moveAbsolute(30, 600);
+    }
+  } else if (catapult_state == READY_TO_LAUNCH) {
+    if (intake_holder->getTargetPosition() == 30) {
+      intake_holder->moveAbsolute(0, 600);
+    }
+  }
+
   // only run if catapult status is "REELING"
   if (catapult_state == REELING) {
     // move until 1200 on potentiometer
@@ -117,6 +128,7 @@ void initialize() {
 
   // this is important, makes sure our catapult is set to the hold brake mode.
   catapult_motor->setBrakeMode(AbstractMotor::brakeMode::hold);
+  intake_holder->setBrakeMode(AbstractMotor::brakeMode::hold);
 
   // calibrate catapult potentiometer
   catapult_pot->calibrate();
@@ -328,6 +340,13 @@ void opcontrol() {
 
     // disable catapult
     BUTTON(pros::E_CONTROLLER_DIGITAL_RIGHT) {
+      // if the catapult is disabled, this button will toggle the intake holder
+      if (catapult_state == DISABLED) {
+        // toggle mode
+        intake_holder->moveVelocity(
+            intake_holder->getTargetPosition() == 30 ? 0 : 30);
+      }
+
       if (pros::millis() - DANGEROUS_OVERRIDE_LAST_PRESS < 1000) {
         // if pressed twice within 1 second, disable catapult
         // this will set the catapult to manual control

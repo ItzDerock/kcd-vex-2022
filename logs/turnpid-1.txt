@@ -1,0 +1,10 @@
+Transferring V5 to download channel
+ERROR - pros.serial.terminal.terminal:reader - Couldn't find the response header in the device response after 2.0 s. Got  but was expecting aa55
+  File "/home/derock/.local/lib/python3.10/site-packages/pros/serial/devices/vex/vex_device.py", line 75, in _rx_packet
+    raise IOError(f"Couldn't find the response header in the device response after {timeout} s. "
+OSError: Couldn't find the response header in the device response after 2.0 s. Got  but was expecting aa55
+We detected something went wrong! Do you want to send a report? [y/N]: Error: invalid input
+We detected something went wrong! Do you want to send a report? [y/N]: 
+Not sending bug report.
+WARNING - pros.serial.terminal.terminal:stop - Stopping terminal
+We detected something went wrong! Do you want to send a report? [y/N]: 

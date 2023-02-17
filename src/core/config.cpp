@@ -1,5 +1,6 @@
 #include "config.hpp"
 #include "main.h"
+#include "okapi/impl/device/motor/motor.hpp"
 #include <memory>
 
 #ifndef CONFIG_CPP
@@ -53,6 +54,9 @@ std::shared_ptr<pros::ADIAnalogIn> catapult_pot =
  */
 std::shared_ptr<Motor> intake_motor = std::make_shared<okapi::Motor>(
     INTAKE_MOTOR, true, AbstractMotor::gearset::green,
+    AbstractMotor::encoderUnits::degrees);
+std::shared_ptr<Motor> intake_holder = std::make_shared<okapi::Motor>(
+    INTAKE_HOLDER, true, AbstractMotor::gearset::green,
     AbstractMotor::encoderUnits::degrees);
 
 /**
