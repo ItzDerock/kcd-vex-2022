@@ -55,7 +55,8 @@ auto toFieldCentered(double rightSpeed, double forwardSpeed) {
 // 0.25 = good
 PIDController xPID(0.125, 0.00005, 0.002);
 PIDController yPID(0.125, 0.00005, 0.002);
-PIDController anglePID = PIDController(0.05, 0.00006, 0.002, true);
+// PIDController anglePID = PIDController(0.05, 0.00006, 0.002, true);
+PIDController anglePID(0.05, 0, 0.002, true);
 
 double maxVelocity = 125;
 void setAngleTolerance(double tolerance) { ANGLE_ERROR_TOLERANCE = tolerance; }
@@ -210,7 +211,7 @@ void toggleChassisBreak() { setChassisBreak(!chassis_break); }
 // RUN THIS *ONLY* IF CATA TASK IS NOT RUNNING!
 void loadCatapultSync() {
   intake_holder->moveAbsolute(30, 600);
-  catapult_motor->moveVelocity(45);
+  catapult_motor->moveVelocity(75);
   while (catapult_pot->get_value() < CATAPULT_POT_LOADING) {
     pros::delay(10);
   }

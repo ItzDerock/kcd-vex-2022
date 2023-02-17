@@ -16,7 +16,7 @@ std::shared_ptr<pros::IMU> inertial =
  * Define tracking wheels
  */
 std::shared_ptr<ADIEncoder> left =
-    std::make_shared<ADIEncoder>(ODOM_LEFT_1, ODOM_LEFT_2);
+    std::make_shared<ADIEncoder>(ODOM_LEFT_1, ODOM_LEFT_2, true);
 std::shared_ptr<ADIEncoder> right =
     std::make_shared<ADIEncoder>(ODOM_RIGHT_1, ODOM_RIGHT_2);
 std::shared_ptr<ADIEncoder> middle =
