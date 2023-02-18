@@ -20,7 +20,7 @@ void run_blue_back() {
   // move to back roller;
   backFarRoller();
 
-  movement::moveTo(10, -10, 45);
+  movement::moveTo(12, -12, 45);
 
   // wait for cata to go down
   movement::loadCatapultSync();
@@ -31,7 +31,7 @@ void run_blue_back() {
   // move to pick up disks
   movement::setMaxVelocity(0.50);
   // movement::moveTo(37, 20, 45);
-  movement::moveTo(38, 23, 45);
+  movement::moveTo(43, 27, 45);
 
   // stop intake
   // intake_motor->moveVelocity(0);
@@ -69,7 +69,7 @@ void run_blue_back() {
   // do roller
   model->xArcade(-75, 0, 0);
   pros::delay(500);
-  roller_motor->moveRelative(120, 50);
+  roller_motor->moveRelative(40, 50);
   model->xArcade(0, 0, 0);
 
   // done

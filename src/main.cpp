@@ -47,7 +47,7 @@ void run_catapult() {
     // move until 1200 on potentiometer
     if (catapult_pot->get_value() < CATAPULT_POT_LOADING) {
       if (catapult_motor->getTargetVelocity() == 0) {
-        catapult_motor->moveVelocity(55);
+        catapult_motor->moveVelocity(75);
       }
     } else {
       catapult_motor->moveVelocity(0);
@@ -341,18 +341,22 @@ void opcontrol() {
     // disable catapult
     BUTTON(pros::E_CONTROLLER_DIGITAL_RIGHT) {
       // if the catapult is disabled, this button will toggle the intake holder
-      if (catapult_state == DISABLED) {
-        // toggle mode
-        intake_holder->moveVelocity(
-            intake_holder->getTargetPosition() == 30 ? 0 : 30);
-      }
+      // if (catapult_state == DISABLED) {
+      //   // toggle mode
+      //   intake_holder->moveVelocity(
+      //       intake_holder->getTargetPosition() == 30 ? 0 : 30);
+      // }
 
       if (pros::millis() - DANGEROUS_OVERRIDE_LAST_PRESS < 1000) {
         // if pressed twice within 1 second, disable catapult
         // this will set the catapult to manual control
         // only use when catapult is malfunctioning or is stuck.
-        catapult_state = DISABLED;
-        catapult_motor->moveVelocity(0);
+        if (catapult_state != DISABLED) {
+          catapult_state = DISABLED;
+          catapult_motor->moveVelocity(0);
+        } else {
+          catapult_state = IDLE;
+        }
 
         // rumble controller so we know this happened.
         master.rumble(".--");
